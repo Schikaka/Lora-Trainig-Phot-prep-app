@@ -128,6 +128,20 @@ pip install -r requirements.txt
 
 → Make sure your ZIP is in the **input/** folder
 
+### **Some faces not detected or cut off?**
+
+The tool uses generous padding to capture full faces. If some images show:
+- **"No face detected"** → Uses smart center crop instead
+- **Half face visible** → Face was too close to image edge
+
+**Solutions:**
+- Use photos with faces centered in frame
+- Avoid extreme close-ups where face fills entire image
+- Make sure faces are clearly visible (good lighting)
+- The tool will still process these images using intelligent cropping
+
+After processing, check the output visually and re-process problem images if needed.
+
 ---
 
 ## 👍 MANUAL RUN (if double-click fails)
