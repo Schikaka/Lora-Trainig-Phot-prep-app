@@ -315,13 +315,28 @@ def process_zip_file(zip_path, output_dir=None, create_zip=True, verbose=True):
             print(f"\n📸 Found {len(image_files)} images")
             print(f"\n" + "=" * 60)
         
-        # Process each image
+        # Process each image and collect statistics
         processed_count = 0
+        skipped_count = 0
+        face_angles = []
+        skipped_reasons = []
+        
         for i, img_path in enumerate(image_files, 1):
             if verbose:
                 print(f"\n[{i}/{len(image_files)}]")
-            results = process_single_image(img_path, output_dir, img_path.name, verbose)
-            processed_count += len(results)
+            result = process_single_image(img_path, output_dir, img_path.name, verbose)
+            
+            if isinstance(result, dict):
+                if result.get('skipped'):
+                    skipped_count += 1
+                    skipped_reasons.extend(result.get('reason', []))
+                else:
+                    processed_count += len(result.get('files', []))
+                    if result.get('face_angle'):
+                        face_angles.append(result['face_angle'])
+            else:
+                # Old return format compatibility
+                processed_count += len(result) if result else 0
         
         if verbose:
             print(f"\n" + "=" * 60)
