@@ -40,15 +40,39 @@ const FilesBrowser = () => {
     return date.toLocaleString();
   };
 
-  const handleDownload = (filename) => {
-    const url = `${API}/files/download/${filename}`;
-    // Create a temporary anchor element and trigger click
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+  const handleDownload = async (filename) => {
+    try {
+      console.log('Downloading:', filename);
+      const url = `${API}/files/download/${filename}`;
+      
+      // Fetch the file
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      
+      // Get the blob
+      const blob = await response.blob();
+      console.log('Blob received:', blob.size, 'bytes');
+      
+      // Create object URL and download
+      const objectUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = objectUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      
+      // Cleanup
+      setTimeout(() => {
+        window.URL.revokeObjectURL(objectUrl);
+        document.body.removeChild(a);
+      }, 100);
+      
+      console.log('✅ Download initiated');
+    } catch (err) {
+      console.error('Download failed:', err);
+      alert(`Download failed: ${err.message}`);
+    }
   };
 
   return (
