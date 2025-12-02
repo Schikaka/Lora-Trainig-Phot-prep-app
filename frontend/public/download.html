@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Download LoRA Image Processor v1.3.0</title>
+    <style>
+        body { font-family: Arial; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .btn { background: #2563eb; color: white; padding: 15px 30px; border: none; 
+               border-radius: 5px; font-size: 18px; cursor: pointer; }
+        .btn:hover { background: #1d4ed8; }
+        .info { background: #e0f2fe; padding: 20px; border-radius: 5px; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <h1>🎨 LoRA Image Processor v1.3.0</h1>
+    <div class="info">
+        <strong>✨ NEW:</strong> Keyword-based file renaming feature included!<br>
+        <strong>📦 Size:</strong> 22 KB<br>
+        <strong>✅ Tested:</strong> Keyword feature working
+    </div>
+    
+    <button class="btn" onclick="downloadFile()">📥 DOWNLOAD NOW</button>
+    
+    <h3>After Download:</h3>
+    <pre>python lora_image_processor_standalone.py input/photos.zip --keyword "MyDaughter"</pre>
+    
+    <script>
+    async function downloadFile() {
+        try {
+            const response = await fetch('/api/files/download/KEYWORD_FIXED_v1.3.0.zip');
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'lora_image_processor_v1.3.0.zip';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            a.remove();
+        } catch (error) {
+            alert('Download failed. Please try the direct link approach below.');
+            window.location.href = '/api/files/download/KEYWORD_FIXED_v1.3.0.zip';
+        }
+    }
+    </script>
+</body>
+</html>
