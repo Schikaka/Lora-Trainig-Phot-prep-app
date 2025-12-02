@@ -52,7 +52,7 @@ except Exception as e:
     FACE_CASCADE = None
 
 def detect_face(image_np):
-    """Detect face in image and return coordinates"""
+    """Detect face in image and return coordinates with angle estimation"""
     if FACE_CASCADE is None:
         return None
         
@@ -62,8 +62,50 @@ def detect_face(image_np):
     if len(faces) > 0:
         # Return largest face
         largest_face = max(faces, key=lambda f: f[2] * f[3])
-        return largest_face
+        x, y, w, h = largest_face
+        
+        # Estimate face angle by aspect ratio (rough approximation)
+        aspect = w / h
+        if aspect > 1.2:
+            angle = 'profile'  # Side view (wider than tall)
+        elif aspect < 0.9:
+            angle = 'tilted'   # Head tilt
+        else:
+            angle = 'frontal'  # Front or 3/4 view
+        
+        return {'box': largest_face, 'angle': angle}
     return None
+
+def check_image_quality(image):
+    """Check if image meets quality standards for LoRA training"""
+    img_array = np.array(image.convert('L'))  # Convert to grayscale for analysis
+    quality_issues = []
+    
+    # 1. Check sharpness (blur detection)
+    laplacian_var = cv2.Laplacian(img_array, cv2.CV_64F).var()
+    if laplacian_var < BLUR_THRESHOLD:
+        quality_issues.append(f"blurry (sharpness: {laplacian_var:.1f})")
+    
+    # 2. Check brightness
+    stat = ImageStat.Stat(image.convert('L'))
+    brightness = stat.mean[0]
+    if brightness < MIN_BRIGHTNESS:
+        quality_issues.append(f"too dark (brightness: {brightness:.1f})")
+    elif brightness > MAX_BRIGHTNESS:
+        quality_issues.append(f"overexposed (brightness: {brightness:.1f})")
+    
+    # 3. Check contrast
+    contrast = stat.stddev[0]
+    if contrast < MIN_CONTRAST:
+        quality_issues.append(f"low contrast ({contrast:.1f})")
+    
+    return {
+        'passed': len(quality_issues) == 0,
+        'issues': quality_issues,
+        'sharpness': laplacian_var,
+        'brightness': brightness,
+        'contrast': contrast
+    }
 
 def smart_crop_face(image, target_width, target_height, verbose=True):
     """Crop image focusing on detected face or center"""
