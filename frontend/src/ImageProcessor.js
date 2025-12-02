@@ -7,7 +7,6 @@ const API = `${BACKEND_URL}/api`;
 const ImageProcessor = () => {
   const [file, setFile] = useState(null);
   const [processing, setProcessing] = useState(false);
-  const [downloading, setDownloading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
   const [dragActive, setDragActive] = useState(false);
