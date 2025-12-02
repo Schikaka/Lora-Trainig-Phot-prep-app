@@ -29,8 +29,10 @@ db = client[os.environ['DB_NAME']]
 # Create temporary directories for image processing
 UPLOAD_DIR = ROOT_DIR / 'uploads'
 PROCESSED_DIR = ROOT_DIR / 'processed'
+PUBLIC_DOWNLOADS = ROOT_DIR / 'public_downloads'
 UPLOAD_DIR.mkdir(exist_ok=True)
 PROCESSED_DIR.mkdir(exist_ok=True)
+PUBLIC_DOWNLOADS.mkdir(exist_ok=True)
 
 # Create the main app without a prefix
 app = FastAPI()
