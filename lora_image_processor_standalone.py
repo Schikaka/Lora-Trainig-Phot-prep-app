@@ -275,7 +275,7 @@ def process_single_image(image_path, output_dir, filename, verbose=True, skip_qu
         print(f"  ✗ Error processing {filename}: {str(e)}")
         return {'skipped': True, 'reason': ['processing_error'], 'error': str(e)}
 
-def process_zip_file(zip_path, output_dir=None, create_zip=True, verbose=True, skip_quality_check=False):
+def process_zip_file(zip_path, output_dir=None, create_zip=True, verbose=True, skip_quality_check=False, output_sizes='both'):
     """Process all images in a ZIP file"""
     zip_path = Path(zip_path)
     
