@@ -3,6 +3,9 @@
   👉 START HERE 👈
 =====================================
 
+🎉 100% FREE SOFTWARE! 🎉
+Released under MIT License - No costs, ever!
+
 Welcome! You've downloaded the LoRA Image Processor.
 
 This tool prepares your photos for AI training (Stable Diffusion LoRA).
