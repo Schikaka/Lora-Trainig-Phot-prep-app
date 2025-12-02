@@ -1,0 +1,12 @@
+LoRA Image Processor
+Version: 1.4.0
+Release Date: December 2, 2025
+
+Features:
+- Auto-detects input/input.zip
+- Keyword-based file renaming
+- Face detection and smart cropping
+- Default: ONE file per photo (512x512)
+- Multiple resolution options available
+
+License: MIT
