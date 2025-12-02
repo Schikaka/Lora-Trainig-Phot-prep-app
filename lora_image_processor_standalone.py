@@ -343,8 +343,49 @@ def process_zip_file(zip_path, output_dir=None, create_zip=True, verbose=True):
             print(f"✅ Processing Complete!")
             print(f"=" * 60)
             print(f"Input images: {len(image_files)}")
+            print(f"Processed: {len(image_files) - skipped_count}")
+            print(f"Skipped: {skipped_count}")
             print(f"Output files: {processed_count}")
             print(f"Output location: {output_dir.absolute()}")
+            
+            # Quality report
+            if skipped_count > 0:
+                print(f"\n⚠️  QUALITY REPORT:")
+                print(f"=" * 60)
+                reason_counts = {}
+                for reason in skipped_reasons:
+                    reason_counts[reason] = reason_counts.get(reason, 0) + 1
+                for reason, count in sorted(reason_counts.items(), key=lambda x: x[1], reverse=True):
+                    print(f"  • {count}x {reason}")
+                print(f"\nTip: Use better lighting and sharper images for best LoRA results")
+            
+            # Variety analysis
+            if face_angles:
+                print(f"\n📊 DATASET VARIETY ANALYSIS:")
+                print(f"=" * 60)
+                angle_counts = {}
+                for angle in face_angles:
+                    angle_counts[angle] = angle_counts.get(angle, 0) + 1
+                
+                total_faces = len(face_angles)
+                for angle, count in sorted(angle_counts.items()):
+                    percentage = (count / total_faces) * 100
+                    print(f"  • {angle.capitalize()}: {count} images ({percentage:.1f}%)")
+                
+                # Variety score and recommendations
+                variety_score = len(angle_counts)
+                print(f"\n  Variety Score: {variety_score}/3")
+                
+                if variety_score == 1:
+                    print(f"  ⚠️  LOW VARIETY - All images are {list(angle_counts.keys())[0]} view")
+                    print(f"  💡 Add different angles for better model generalization")
+                elif variety_score == 2:
+                    print(f"  ✓ GOOD VARIETY - Two different angles detected")
+                    print(f"  💡 Consider adding more variety for even better results")
+                else:
+                    print(f"  ✅ EXCELLENT VARIETY - Multiple angles detected!")
+                    print(f"  💡 Great dataset for LoRA training!")
+            
             print(f"\n💡 Each image was processed into:")
             print(f"   • 512×512 version (close-up faces)")
             print(f"   • 512×768 version (portrait shots)")
