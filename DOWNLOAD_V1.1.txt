@@ -5,7 +5,7 @@
 
 DOWNLOAD LINK:
 
-https://lora-prep.preview.emergentagent.com/api/files/download/lora_image_processor_v1.1.0.zip
+https://lora-smart-crop.preview.emergentagent.com/api/files/download/lora_image_processor_v1.1.0.zip
 
 ================================================================
 
@@ -128,7 +128,7 @@ Use for personal or commercial projects!
 
 DOWNLOAD NOW:
 
-https://lora-prep.preview.emergentagent.com/api/files/download/lora_image_processor_v1.1.0.zip
+https://lora-smart-crop.preview.emergentagent.com/api/files/download/lora_image_processor_v1.1.0.zip
 
 Extract and open README.txt!
 

@@ -4,7 +4,7 @@
 
 COPY THIS LINK AND PASTE IN YOUR BROWSER:
 
-https://lora-prep.preview.emergentagent.com/api/files/download/lora_image_processor_v1.0.0.zip
+https://lora-smart-crop.preview.emergentagent.com/api/files/download/lora_image_processor_v1.0.0.zip
 
 (Right-click the link, Copy, paste in browser address bar, press Enter)
 
@@ -92,7 +92,7 @@ After downloading, read these files IN THIS ORDER:
 
 DOWNLOAD LINK AGAIN:
 
-https://lora-prep.preview.emergentagent.com/api/files/download/lora_image_processor_v1.0.0.zip
+https://lora-smart-crop.preview.emergentagent.com/api/files/download/lora_image_processor_v1.0.0.zip
 
 Save to Desktop, then extract, then open SIMPLE_GUIDE.txt!
 

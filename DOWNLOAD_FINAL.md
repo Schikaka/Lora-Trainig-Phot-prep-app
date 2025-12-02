@@ -5,7 +5,7 @@
 **Click here to download:**
 
 ```
-https://lora-prep.preview.emergentagent.com/api/files/download/lora_image_processor_v1.1.0_final.zip
+https://lora-smart-crop.preview.emergentagent.com/api/files/download/lora_image_processor_v1.1.0_final.zip
 ```
 
 **File:** `lora_image_processor_v1.1.0_final.zip` (28 KB)
@@ -145,7 +145,7 @@ After downloading, check the **docs/** folder:
 ## 📦 Download Again
 
 ```
-https://lora-prep.preview.emergentagent.com/api/files/download/lora_image_processor_v1.1.0_final.zip
+https://lora-smart-crop.preview.emergentagent.com/api/files/download/lora_image_processor_v1.1.0_final.zip
 ```
 
 Extract and open **README.md** - it has everything you need!
