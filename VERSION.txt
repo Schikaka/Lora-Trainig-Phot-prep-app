@@ -1,6 +1,11 @@
 LoRA Image Processor
-Version: 1.4.0
+Version: 1.4.1
 Release Date: December 2, 2025
+
+Bug Fixes in v1.4.1:
+- Fixed: Resolution selection prompt now always appears
+- Fixed: Correct prompt order (Keyword first, then Resolution)
+- Added: README files in input/ and output/ folders for clarity
 
 Features:
 - Auto-detects input/input.zip
