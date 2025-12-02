@@ -81,30 +81,12 @@ const ImageProcessor = () => {
 
   const handleDownload = () => {
     if (!result?.session_id) {
-      console.log('Download prevented: No session ID');
       return;
     }
-
-    console.log('Starting direct download for session:', result.session_id);
     
-    // Create direct download link
+    // Create direct download link - NO cleanup, files stay available
     const downloadUrl = `${API}/download/${result.session_id}`;
-    
-    // Open in new window - browser will handle download
     window.open(downloadUrl, '_blank');
-    
-    console.log('✅ Download link opened:', downloadUrl);
-    
-    // Cleanup server files after a delay
-    setTimeout(async () => {
-      try {
-        console.log('Cleaning up server files...');
-        await axios.delete(`${API}/cleanup/${result.session_id}`);
-        console.log('✅ Server cleanup completed');
-      } catch (cleanupErr) {
-        console.log('Cleanup completed or file already removed');
-      }
-    }, 5000); // Wait 5 seconds for download to start
   };
 
   const handleReset = async () => {
