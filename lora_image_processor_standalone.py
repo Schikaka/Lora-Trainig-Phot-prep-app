@@ -23,7 +23,7 @@ from datetime import datetime
 import argparse
 
 try:
-    from PIL import Image
+    from PIL import Image, ImageStat
     import cv2
     import numpy as np
 except ImportError as e:
@@ -33,6 +33,12 @@ except ImportError as e:
     print("\nOr use:")
     print("  pip install -r requirements.txt")
     sys.exit(1)
+
+# Quality thresholds
+BLUR_THRESHOLD = 100.0  # Laplacian variance threshold
+MIN_BRIGHTNESS = 30     # Minimum average brightness
+MAX_BRIGHTNESS = 225    # Maximum average brightness
+MIN_CONTRAST = 30       # Minimum contrast
 
 # Version
 __version__ = "1.0.0"
