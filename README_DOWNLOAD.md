@@ -175,3 +175,17 @@ Never used command line before?
 ---
 
 Made simple for everyone - from beginners to pros! ❤️
+
+---
+
+## 📄 License
+
+**MIT License** - Free and Open Source
+
+✅ Use for personal projects
+✅ Use for commercial projects  
+✅ Modify and distribute freely
+✅ No registration required
+✅ No hidden costs ever
+
+See `LICENSE` file or `FREEWARE_INFO.txt` for details.
