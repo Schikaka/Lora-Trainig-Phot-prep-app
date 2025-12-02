@@ -60,28 +60,58 @@ except Exception as e:
     FACE_CASCADE = None
 
 def detect_face(image_np):
-    """Detect face in image and return coordinates with angle estimation"""
+    """Detect face in image with multiple attempts and better accuracy"""
     if FACE_CASCADE is None:
         return None
         
     gray = cv2.cvtColor(image_np, cv2.COLOR_RGB2GRAY)
-    faces = FACE_CASCADE.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
     
-    if len(faces) > 0:
+    # Try multiple detection parameters for better results
+    detection_params = [
+        {'scaleFactor': 1.05, 'minNeighbors': 3, 'minSize': (40, 40)},  # More sensitive
+        {'scaleFactor': 1.1, 'minNeighbors': 5, 'minSize': (30, 30)},   # Default
+        {'scaleFactor': 1.2, 'minNeighbors': 4, 'minSize': (20, 20)},   # Even more sensitive
+    ]
+    
+    all_faces = []
+    for params in detection_params:
+        faces = FACE_CASCADE.detectMultiScale(gray, **params)
+        if len(faces) > 0:
+            all_faces.extend(faces)
+    
+    if len(all_faces) > 0:
+        # Remove duplicate detections (overlapping boxes)
+        unique_faces = []
+        for face in all_faces:
+            x, y, w, h = face
+            is_duplicate = False
+            for uf in unique_faces:
+                ux, uy, uw, uh = uf
+                # Check if faces overlap significantly
+                overlap_x = max(0, min(x + w, ux + uw) - max(x, ux))
+                overlap_y = max(0, min(y + h, uy + uh) - max(y, uy))
+                overlap_area = overlap_x * overlap_y
+                if overlap_area > (w * h * 0.5):  # 50% overlap
+                    is_duplicate = True
+                    break
+            if not is_duplicate:
+                unique_faces.append(face)
+        
         # Return largest face
-        largest_face = max(faces, key=lambda f: f[2] * f[3])
+        largest_face = max(unique_faces, key=lambda f: f[2] * f[3])
         x, y, w, h = largest_face
         
-        # Estimate face angle by aspect ratio (rough approximation)
+        # Estimate face angle by aspect ratio
         aspect = w / h
         if aspect > 1.2:
-            angle = 'profile'  # Side view (wider than tall)
+            angle = 'profile'
         elif aspect < 0.9:
-            angle = 'tilted'   # Head tilt
+            angle = 'tilted'
         else:
-            angle = 'frontal'  # Front or 3/4 view
+            angle = 'frontal'
         
         return {'box': largest_face, 'angle': angle}
+    
     return None
 
 def check_image_quality(image):
