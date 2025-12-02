@@ -206,6 +206,21 @@ def process_zip_file(zip_path, output_dir=None):
         print(f"   • 512×512 version (close-up faces)")
         print(f"   • 512×768 version (portrait shots)")
         
+        # Create ZIP file for easy download
+        print(f"\n📦 Creating ZIP file for download...")
+        zip_output = output_dir.parent / f"{output_dir.name}.zip"
+        with zipfile.ZipFile(zip_output, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            for file_path in output_dir.iterdir():
+                if file_path.is_file():
+                    zipf.write(file_path, file_path.name)
+        
+        print(f"✅ ZIP created: {zip_output.absolute()}")
+        print(f"\n" + "=" * 60)
+        print(f"📥 DOWNLOAD YOUR IMAGES:")
+        print(f"=" * 60)
+        print(f"ZIP file: {zip_output.name}")
+        print(f"Location: {zip_output.parent.absolute()}")
+        
     finally:
         # Cleanup temp directory
         shutil.rmtree(temp_dir, ignore_errors=True)
