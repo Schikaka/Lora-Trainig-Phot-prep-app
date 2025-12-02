@@ -232,16 +232,22 @@ def process_zip_file(zip_path, output_dir=None, make_public=False):
 def main():
     """Main entry point"""
     if len(sys.argv) < 2:
-        print("Usage: python process_lora_images.py <input.zip> [output_folder]")
+        print("Usage: python process_lora_images.py <input.zip> [output_folder] [--public]")
         print("\nExample:")
         print("  python process_lora_images.py my_photos.zip")
         print("  python process_lora_images.py my_photos.zip ./output")
+        print("  python process_lora_images.py my_photos.zip --public  (save to web downloads)")
         sys.exit(1)
     
     zip_file = sys.argv[1]
-    output_folder = sys.argv[2] if len(sys.argv) > 2 else None
+    make_public = '--public' in sys.argv
     
-    process_zip_file(zip_file, output_folder)
+    # Get output folder if specified and not --public flag
+    output_folder = None
+    if len(sys.argv) > 2 and sys.argv[2] != '--public':
+        output_folder = sys.argv[2]
+    
+    process_zip_file(zip_file, output_folder, make_public)
 
 if __name__ == "__main__":
     main()
