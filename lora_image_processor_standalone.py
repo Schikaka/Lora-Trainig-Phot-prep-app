@@ -336,7 +336,7 @@ def process_zip_file(zip_path, output_dir=None, create_zip=True, verbose=True, s
         for i, img_path in enumerate(image_files, 1):
             if verbose:
                 print(f"\n[{i}/{len(image_files)}]")
-            result = process_single_image(img_path, output_dir, img_path.name, verbose, skip_quality_check)
+            result = process_single_image(img_path, output_dir, img_path.name, verbose, skip_quality_check, output_sizes)
             
             if isinstance(result, dict):
                 if result.get('skipped'):
