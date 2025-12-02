@@ -204,6 +204,100 @@ async def get_status_checks():
     
     return status_checks
 
+@api_router.post("/process-images")
+async def process_images(file: UploadFile = File(...)):
+    """Process uploaded zip file containing images"""
+    if not file.filename.endswith('.zip'):
+        raise HTTPException(status_code=400, detail="Only ZIP files are accepted")
+    
+    # Generate unique session ID
+    session_id = str(uuid.uuid4())
+    session_upload_dir = UPLOAD_DIR / session_id
+    session_processed_dir = PROCESSED_DIR / session_id
+    session_upload_dir.mkdir(exist_ok=True)
+    session_processed_dir.mkdir(exist_ok=True)
+    
+    try:
+        # Save uploaded file
+        zip_path = session_upload_dir / file.filename
+        with open(zip_path, 'wb') as f:
+            content = await file.read()
+            f.write(content)
+        
+        # Extract zip file
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extractall(session_upload_dir)
+        
+        # Find all image files
+        image_extensions = {'.jpg', '.jpeg', '.png', '.bmp', '.webp'}
+        image_files = []
+        for ext in image_extensions:
+            image_files.extend(session_upload_dir.rglob(f'*{ext}'))
+            image_files.extend(session_upload_dir.rglob(f'*{ext.upper()}'))
+        
+        if not image_files:
+            raise HTTPException(status_code=400, detail="No valid image files found in ZIP")
+        
+        logger.info(f"Processing {len(image_files)} images for session {session_id}")
+        
+        # Process each image
+        processed_count = 0
+        for img_path in image_files:
+            results = process_single_image(img_path, session_processed_dir, img_path.name)
+            if results:
+                processed_count += len(results)
+        
+        # Create output zip file
+        output_zip_path = PROCESSED_DIR / f"{session_id}_processed.zip"
+        with zipfile.ZipFile(output_zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            for file_path in session_processed_dir.iterdir():
+                if file_path.is_file():
+                    zipf.write(file_path, file_path.name)
+        
+        # Clean up temporary files
+        shutil.rmtree(session_upload_dir, ignore_errors=True)
+        shutil.rmtree(session_processed_dir, ignore_errors=True)
+        
+        return {
+            "status": "success",
+            "session_id": session_id,
+            "total_images_processed": len(image_files),
+            "total_output_files": processed_count,
+            "message": f"Successfully processed {len(image_files)} images into {processed_count} output files"
+        }
+    
+    except Exception as e:
+        # Clean up on error
+        shutil.rmtree(session_upload_dir, ignore_errors=True)
+        shutil.rmtree(session_processed_dir, ignore_errors=True)
+        logger.error(f"Error processing images: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error processing images: {str(e)}")
+
+@api_router.get("/download/{session_id}")
+async def download_processed(session_id: str):
+    """Download processed images as ZIP"""
+    output_zip_path = PROCESSED_DIR / f"{session_id}_processed.zip"
+    
+    if not output_zip_path.exists():
+        raise HTTPException(status_code=404, detail="Processed file not found")
+    
+    return FileResponse(
+        path=output_zip_path,
+        filename=f"lora_training_images_{session_id}.zip",
+        media_type="application/zip"
+    )
+
+@api_router.delete("/cleanup/{session_id}")
+async def cleanup_session(session_id: str):
+    """Clean up processed files after download"""
+    output_zip_path = PROCESSED_DIR / f"{session_id}_processed.zip"
+    
+    if output_zip_path.exists():
+        output_zip_path.unlink()
+        return {"status": "success", "message": "Files cleaned up"}
+    
+    return {"status": "not_found", "message": "No files to clean up"}
+
 # Include the router in the main app
 app.include_router(api_router)
 
