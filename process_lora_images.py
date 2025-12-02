@@ -141,7 +141,7 @@ def process_single_image(image_path, output_dir, filename):
         print(f"  ✗ Error processing {filename}: {str(e)}")
         return []
 
-def process_zip_file(zip_path, output_dir=None):
+def process_zip_file(zip_path, output_dir=None, make_public=False):
     """Process all images in a ZIP file"""
     zip_path = Path(zip_path)
     
@@ -152,7 +152,11 @@ def process_zip_file(zip_path, output_dir=None):
     # Create output directory
     if output_dir is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        output_dir = zip_path.parent / f"lora_processed_{timestamp}"
+        if make_public:
+            # Save to backend public downloads for web access
+            output_dir = Path("/app/backend/public_downloads") / f"lora_processed_{timestamp}"
+        else:
+            output_dir = zip_path.parent / f"lora_processed_{timestamp}"
     else:
         output_dir = Path(output_dir)
     
