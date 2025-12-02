@@ -206,8 +206,8 @@ def upscale_image(image, target_width, target_height):
     """Upscale image to target size using Lanczos resampling"""
     return image.resize((target_width, target_height), Image.Resampling.LANCZOS)
 
-def process_single_image(image_path, output_dir, filename, verbose=True, skip_quality_check=False):
-    """Process a single image to create both 512x512 and 512x768 versions"""
+def process_single_image(image_path, output_dir, filename, verbose=True, skip_quality_check=False, output_sizes='both'):
+    """Process a single image with specified output sizes"""
     try:
         if verbose:
             print(f"Processing: {filename}")
