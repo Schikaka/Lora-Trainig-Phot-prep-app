@@ -118,12 +118,13 @@ const FilesBrowser = () => {
                         <span>🕐 Created: {formatDate(file.created)}</span>
                       </div>
                     </div>
-                    <button
-                      onClick={() => handleDownload(file.filename)}
-                      className="ml-4 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg font-semibold hover:from-green-600 hover:to-emerald-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all"
+                    <a
+                      href={`${API}/files/download/${file.filename}`}
+                      download={file.filename}
+                      className="ml-4 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg font-semibold hover:from-green-600 hover:to-emerald-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all inline-block text-center"
                     >
                       📥 Download
-                    </button>
+                    </a>
                   </div>
                 </div>
               ))}
