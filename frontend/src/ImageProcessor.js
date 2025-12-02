@@ -85,21 +85,38 @@ const ImageProcessor = () => {
     try {
       const response = await axios.get(`${API}/download/${result.session_id}`, {
         responseType: 'blob',
+        timeout: 60000, // 60 seconds timeout
       });
 
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      // Create blob URL and trigger download
+      const blob = new Blob([response.data], { type: 'application/zip' });
+      const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', `lora_training_images_${result.session_id}.zip`);
       document.body.appendChild(link);
       link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
+      
+      // Wait a bit before cleanup to ensure download started
+      setTimeout(() => {
+        link.remove();
+        window.URL.revokeObjectURL(url);
+      }, 100);
 
-      // Cleanup server files
-      await axios.delete(`${API}/cleanup/${result.session_id}`);
+      // Cleanup server files after a delay to ensure download completed
+      setTimeout(async () => {
+        try {
+          await axios.delete(`${API}/cleanup/${result.session_id}`);
+        } catch (cleanupErr) {
+          console.log('Cleanup completed or file already removed');
+        }
+      }, 2000);
+      
     } catch (err) {
-      setError('Error downloading file. Please try again.');
+      const errorMsg = err.response?.status === 404 
+        ? 'File not found. It may have already been downloaded.'
+        : 'Error downloading file. Please try again.';
+      setError(errorMsg);
       console.error('Download error:', err);
     }
   };
