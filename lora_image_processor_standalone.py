@@ -514,6 +514,7 @@ For more info: https://github.com/yourusername/lora-image-processor
     
     parser.add_argument('input_zip', help='Path to input ZIP file containing images')
     parser.add_argument('-o', '--output', help='Output directory (default: auto-generated)', default=None)
+    parser.add_argument('--keyword', help='Keyword for renaming files (e.g., "MyDaughter"). If not provided, will prompt.', default=None)
     parser.add_argument('--sizes', help='Output sizes: "both" (default), "512x512", "512x768", or "1024x1024"', 
                         default='both', choices=['both', '512x512', '512x768', '1024x1024'])
     parser.add_argument('--no-zip', action='store_true', help='Do not create output ZIP file')
