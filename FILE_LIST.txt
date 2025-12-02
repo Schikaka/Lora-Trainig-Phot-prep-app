@@ -28,6 +28,10 @@ Download ALL these files to use the tool:
 9. check_setup.py                       (Verify installation)
 10. FILE_LIST.txt                       (This file)
 
+📄 LICENSE FILES:
+11. LICENSE                             (MIT License - legal text)
+12. FREEWARE_INFO.txt                   (Free software explained)
+
 =====================================
 
 MINIMUM FILES NEEDED (If you know Python):
