@@ -1,0 +1,109 @@
+=====================================
+  LoRA IMAGE PROCESSOR - QUICK START
+=====================================
+
+📥 DOWNLOAD THESE FILES:
+1. lora_image_processor_standalone.py
+2. requirements.txt
+3. run_windows.bat (Windows users)
+4. run_mac_linux.sh (Mac/Linux users)
+5. BEGINNER_GUIDE.md (full instructions)
+
+Put all files in ONE folder!
+
+=====================================
+  WINDOWS USERS - COPY & PASTE
+=====================================
+
+STEP 1: Install Python
+→ Go to: https://www.python.org/downloads/
+→ Download and install
+→ CHECK "Add Python to PATH" ✅
+
+STEP 2: Open Command Prompt (cmd)
+→ Press Windows Key + R
+→ Type: cmd
+→ Press Enter
+
+STEP 3: Go to your folder (change path as needed)
+cd Desktop\LoRA-Tool
+
+STEP 4: Install tools (copy & paste, press Enter)
+pip install pillow opencv-python numpy
+
+STEP 5: Use it!
+→ Put your photos in a ZIP file called "input.zip"
+→ Double-click "run_windows.bat"
+→ DONE! Get output.zip
+
+OR use command:
+python lora_image_processor_standalone.py your_photos.zip
+
+=====================================
+  MAC USERS - COPY & PASTE
+=====================================
+
+STEP 1: Install Python
+→ Open Terminal (Cmd + Space, type "Terminal")
+→ Copy & paste this line:
+brew install python3
+
+STEP 2: Go to your folder (change path as needed)
+cd Desktop/LoRA-Tool
+
+STEP 3: Install tools (copy & paste, press Enter)
+pip3 install pillow opencv-python numpy
+
+STEP 4: Make script executable
+chmod +x run_mac_linux.sh
+
+STEP 5: Use it!
+→ Put your photos in a ZIP file called "input.zip"
+→ Double-click "run_mac_linux.sh"
+→ DONE! Get output.zip
+
+OR use command:
+python3 lora_image_processor_standalone.py your_photos.zip
+
+=====================================
+  LINUX USERS - COPY & PASTE
+=====================================
+
+STEP 1: Install Python (Ubuntu/Debian)
+sudo apt update
+sudo apt install python3 python3-pip
+
+STEP 2: Go to your folder
+cd ~/Desktop/LoRA-Tool
+
+STEP 3: Install tools
+pip3 install pillow opencv-python numpy
+
+STEP 4: Make script executable
+chmod +x run_mac_linux.sh
+
+STEP 5: Use it!
+→ Put photos in ZIP called "input.zip"
+→ Run: ./run_mac_linux.sh
+→ DONE! Get output.zip
+
+OR use command:
+python3 lora_image_processor_standalone.py your_photos.zip
+
+=====================================
+  THAT'S IT!
+=====================================
+
+Need help? Read BEGINNER_GUIDE.md
+
+Your processed images will be in:
+- output folder (all images)
+- output.zip (ready to download)
+
+Each photo becomes 2 files:
+- filename_512x512.png (square)
+- filename_512x768.png (tall)
+
+Use these for LoRA training!
+
+=====================================
