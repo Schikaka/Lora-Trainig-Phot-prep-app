@@ -402,9 +402,9 @@ def process_zip_file(zip_path, output_dir=None, create_zip=True, verbose=True, s
                 else:
                     num_files = len(result.get('files', []))
                     processed_count += num_files
-                    # Increment counter by number of files created (for both sizes, counter increases by 2)
+                    # Increment counter by 1 for each input image (not per output file)
                     if keyword:
-                        file_counter += num_files
+                        file_counter += 1
                     
                     face_angle = result.get('face_angle')
                     if face_angle and face_angle != 'no_face':
