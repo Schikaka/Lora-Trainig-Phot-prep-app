@@ -524,20 +524,19 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python lora_image_processor.py input.zip
+  python lora_image_processor.py (looks for input/input.zip)
+  python lora_image_processor.py my_photos.zip
   python lora_image_processor.py input.zip -o ./output
-  python lora_image_processor.py input.zip --no-zip
-  python lora_image_processor.py input.zip -q
 
 For more info: https://github.com/yourusername/lora-image-processor
         """
     )
     
-    parser.add_argument('input_zip', help='Path to input ZIP file containing images')
+    parser.add_argument('input_zip', nargs='?', default='input/input.zip', help='Path to input ZIP file (default: input/input.zip)')
     parser.add_argument('-o', '--output', help='Output directory (default: auto-generated)', default=None)
     parser.add_argument('--keyword', help='Keyword for renaming files (e.g., "MyDaughter"). If not provided, will prompt.', default=None)
-    parser.add_argument('--sizes', help='Output sizes: "both" (default), "512x512", "512x768", or "1024x1024"', 
-                        default='both', choices=['both', '512x512', '512x768', '1024x1024'])
+    parser.add_argument('--sizes', help='Output sizes: "512x512" (default), "512x768", "1024x1024", or "both"', 
+                        default='512x512', choices=['both', '512x512', '512x768', '1024x1024'])
     parser.add_argument('--no-zip', action='store_true', help='Do not create output ZIP file')
     parser.add_argument('--skip-quality-check', action='store_true', help='Skip quality filtering (process all images)')
     parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode (minimal output)')
@@ -552,22 +551,22 @@ For more info: https://github.com/yourusername/lora-image-processor
         print("  CHOOSE OUTPUT SIZE")
         print("=" * 60)
         print("\nOptions:")
-        print("  1. Both 512x512 and 512x768 (default, recommended)")
-        print("  2. Only 512x512 (close-up faces)")
-        print("  3. Only 512x768 (portraits)")
-        print("  4. Only 1024x1024 (SDXL training)")
+        print("  1. Only 512x512 (recommended - close-up faces)")
+        print("  2. Only 512x768 (portraits)")
+        print("  3. Only 1024x1024 (SDXL training)")
+        print("  4. Both 512x512 AND 512x768 (creates 2 files per photo)")
         print("\nPress Enter for option 1 (recommended)")
         
         choice = input("\nEnter your choice (1-4): ").strip()
         
         if choice == '2':
-            output_sizes = '512x512'
-        elif choice == '3':
             output_sizes = '512x768'
-        elif choice == '4':
+        elif choice == '3':
             output_sizes = '1024x1024'
+        elif choice == '4':
+            output_sizes = 'both'
         else:
-            output_sizes = 'both'  # Default for 1 or Enter
+            output_sizes = '512x512'  # Default for 1 or Enter
     
     # Get keyword for file naming
     keyword = args.keyword

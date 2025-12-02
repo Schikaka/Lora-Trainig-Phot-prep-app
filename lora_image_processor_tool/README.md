@@ -52,48 +52,49 @@ python -m pip install -r requirements.txt
 
 ---
 
-## 3. Prepare your photos ZIP file
+## 3. Put your photos in the INPUT folder
 
-Create a ZIP file with your photos. Name it anything you want:
+Create a ZIP file with your photos and name it:
 
 ```
-my_photos.zip
+input.zip
 ```
 
-You can place it:
-- In the same folder as the script
-- Or in the **input/** folder (optional)
-- Or anywhere - you'll specify the path when running
+Put this file in the **input/** folder:
+
+```
+input/input.zip
+```
 
 ---
 
 ## 4. Run the script
 
-### Quick Method:
 **Double-click** the Python script file directly:
 ```
 lora_image_processor_standalone.py
 ```
 
-### Or use Command Line:
-Open `cmd` or PowerShell in this folder, then run:
+Or use Command Line (run from the main folder):
 ```
-python lora_image_processor_standalone.py your_photos.zip
+python lora_image_processor_standalone.py
 ```
 
-The script will ask you two questions:
+The script will automatically look for `input/input.zip` and ask you two questions:
 
 ### Question 1: Output size
 
 ```
 Choose output size:
-  1. Both 512x512 and 512x768 (default, recommended)
-  2. Only 512x512 (close-up faces)
-  3. Only 512x768 (portraits)
-  4. Only 1024x1024 (SDXL training)
+  1. Only 512x512 (recommended - close-up faces)
+  2. Only 512x768 (portraits)
+  3. Only 1024x1024 (SDXL training)
+  4. Both 512x512 AND 512x768 (creates 2 files per photo)
 ```
 
 Type `1`, `2`, `3`, or `4` and press Enter.
+
+**⚠️ Note:** Option 4 will create TWO files for each photo (double the files)
 
 ### Question 2: Keyword for naming (NEW!)
 
