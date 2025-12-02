@@ -81,7 +81,10 @@ const ImageProcessor = () => {
   };
 
   const handleDownload = async () => {
-    if (!result?.session_id) return;
+    if (!result?.session_id || downloading) return;
+
+    setDownloading(true);
+    setError(null);
 
     try {
       const response = await axios.get(`${API}/download/${result.session_id}`, {
@@ -119,6 +122,8 @@ const ImageProcessor = () => {
         : 'Error downloading file. Please try again.';
       setError(errorMsg);
       console.error('Download error:', err);
+    } finally {
+      setDownloading(false);
     }
   };
 
