@@ -81,16 +81,24 @@ const ImageProcessor = () => {
   };
 
   const handleDownload = async () => {
-    if (!result?.session_id || downloading) return;
+    if (!result?.session_id || downloading) {
+      console.log('Download prevented: No session ID or already downloading');
+      return;
+    }
 
+    console.log('Starting download for session:', result.session_id);
     setDownloading(true);
     setError(null);
 
     try {
+      console.log('Fetching file from:', `${API}/download/${result.session_id}`);
+      
       const response = await axios.get(`${API}/download/${result.session_id}`, {
         responseType: 'blob',
         timeout: 60000, // 60 seconds timeout
       });
+
+      console.log('File received, size:', response.data.size, 'bytes');
 
       // Create blob URL and trigger download
       const blob = new Blob([response.data], { type: 'application/zip' });
@@ -101,29 +109,41 @@ const ImageProcessor = () => {
       document.body.appendChild(link);
       link.click();
       
+      console.log('✅ Download triggered successfully');
+      
       // Wait a bit before cleanup to ensure download started
       setTimeout(() => {
         link.remove();
         window.URL.revokeObjectURL(url);
+        console.log('Link cleanup completed');
       }, 100);
 
       // Cleanup server files after a delay to ensure download completed
       setTimeout(async () => {
         try {
+          console.log('Cleaning up server files...');
           await axios.delete(`${API}/cleanup/${result.session_id}`);
+          console.log('✅ Server cleanup completed');
         } catch (cleanupErr) {
-          console.log('Cleanup completed or file already removed');
+          console.log('Cleanup completed or file already removed:', cleanupErr.message);
         }
       }, 2000);
       
     } catch (err) {
+      console.error('❌ Download error:', err);
+      console.error('Error details:', {
+        message: err.message,
+        response: err.response?.data,
+        status: err.response?.status
+      });
+      
       const errorMsg = err.response?.status === 404 
         ? 'File not found. It may have already been downloaded.'
-        : 'Error downloading file. Please try again.';
+        : `Error downloading file: ${err.message}. Please try again.`;
       setError(errorMsg);
-      console.error('Download error:', err);
     } finally {
       setDownloading(false);
+      console.log('Download process completed');
     }
   };
 
