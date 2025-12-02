@@ -543,6 +543,23 @@ For more info: https://github.com/yourusername/lora-image-processor
     
     args = parser.parse_args()
     
+    # Get keyword for file naming
+    keyword = args.keyword
+    if not args.quiet and not keyword:
+        print("\n" + "=" * 60)
+        print("  KEYWORD FOR FILE NAMING")
+        print("=" * 60)
+        print("\nFor LoRA training, all images should have consistent names")
+        print("with your concept keyword (e.g., 'MyDaughter', 'AlexSmith').")
+        print("\nFiles will be renamed to: [keyword]_001.png, [keyword]_002.png, etc.")
+        print("\nPress Enter to skip and use original filenames.")
+        keyword = input("\nEnter keyword: ").strip()
+        if keyword:
+            # Clean keyword (remove spaces, special chars)
+            keyword = "".join(c for c in keyword if c.isalnum() or c in ('_', '-'))
+            if not keyword:
+                keyword = None
+    
     # Process the images
     success = process_zip_file(
         args.input_zip,
@@ -550,7 +567,8 @@ For more info: https://github.com/yourusername/lora-image-processor
         create_zip=not args.no_zip,
         verbose=not args.quiet,
         skip_quality_check=args.skip_quality_check,
-        output_sizes=args.sizes
+        output_sizes=args.sizes,
+        keyword=keyword
     )
     
     sys.exit(0 if success else 1)
