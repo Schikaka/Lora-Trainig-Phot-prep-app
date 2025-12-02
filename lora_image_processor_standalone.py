@@ -344,6 +344,8 @@ def process_zip_file(zip_path, output_dir=None, create_zip=True, verbose=True, s
         print(f"=" * 60)
         print(f"Input ZIP: {zip_path}")
         print(f"Output folder: {output_dir}")
+        if keyword:
+            print(f"Naming pattern: {keyword}_001.png, {keyword}_002.png, ...")
         print(f"=" * 60)
     
     # Create temp extraction directory
