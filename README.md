@@ -1,3 +1,16 @@
+# LoRA Image Processor
+
+**Prepare your photos for Stable Diffusion LoRA training**
+
+This tool automatically:
+- ✅ Detects faces and crops intelligently
+- ✅ Creates perfect sizes for SD1.5 or SDXL (512×512, 512×768, 1024×1024)
+- ✅ Filters out blurry/poor quality images
+- ✅ Renames files with your keyword for LoRA training (NEW!)
+- ✅ Provides quality and variety reports
+
+---
+
 # HOW TO INSTALL & RUN THIS APP (WINDOWS)
 
 Use the files you see in this folder.
