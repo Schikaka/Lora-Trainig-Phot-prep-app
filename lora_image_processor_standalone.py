@@ -285,7 +285,6 @@ def process_single_image(image_path, output_dir, filename, verbose=True, skip_qu
             sizes_to_create = [output_sizes]
         
         # Process each requested size
-        current_counter = file_counter if file_counter is not None else 0
         for size_key in sizes_to_create:
             width, height, description = size_configs[size_key]
             
@@ -301,9 +300,8 @@ def process_single_image(image_path, output_dir, filename, verbose=True, skip_qu
             
             # Generate filename with keyword if provided
             if keyword and file_counter is not None:
-                # Use keyword_number format, increment for each output file
-                output_filename = f"{keyword}_{current_counter:03d}.png"
-                current_counter += 1
+                # Use keyword_number format - counter is managed by caller
+                output_filename = f"{keyword}_{file_counter:03d}.png"
             else:
                 # Use original format
                 output_filename = f"{base_name}_{width}x{height}.png"
