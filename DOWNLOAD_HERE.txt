@@ -1,0 +1,99 @@
+================================================================
+  DOWNLOAD YOUR LORA IMAGE PROCESSOR
+================================================================
+
+COPY THIS LINK AND PASTE IN YOUR BROWSER:
+
+https://lora-prep.preview.emergentagent.com/api/files/download/lora_image_processor_v1.0.0.zip
+
+(Right-click the link, Copy, paste in browser address bar, press Enter)
+
+================================================================
+
+File: lora_image_processor_v1.0.0.zip
+Size: 33 KB
+Contains: 18 files (everything you need!)
+
+================================================================
+
+AFTER DOWNLOADING:
+
+1. Extract the ZIP file
+2. Open SIMPLE_GUIDE.txt
+3. Follow the steps (copy-paste commands)
+4. Done!
+
+================================================================
+
+WHAT'S INSIDE THE ZIP:
+
+Main Program:
+  - lora_image_processor_standalone.py (the tool)
+  - requirements.txt (list of tools needed)
+
+One-Click Scripts:
+  - run_windows.bat (Windows users: double-click this!)
+  - run_mac_linux.sh (Mac/Linux users: double-click this!)
+
+Setup:
+  - check_setup.py (test if everything works)
+
+Guides (PICK ONE):
+  - SIMPLE_GUIDE.txt ⭐ START HERE! (easiest)
+  - START_HERE.txt (which guide to read)
+  - QUICK_START.txt (copy-paste commands only)
+  - BEGINNER_GUIDE.md (complete tutorial)
+  - README_DOWNLOAD.md (overview)
+
+Advanced:
+  - README_IMPROVED.md (technical details)
+  - README_GITHUB.md (for GitHub upload)
+  - MANUAL_GITHUB_UPLOAD.md (how to put on GitHub)
+  - HOW_TO_SHARE.md (how to share this tool)
+
+Info:
+  - LICENSE (MIT License - free!)
+  - FREEWARE_INFO.txt (what free means)
+  - FILE_LIST.txt (all files explained)
+  - PACKAGE_CONTENTS.txt (what's in package)
+
+================================================================
+
+QUICK START (3 STEPS):
+
+1. Download ZIP from link above
+2. Extract ZIP
+3. Open SIMPLE_GUIDE.txt and follow it
+
+Total time: 5-10 minutes (first time setup)
+Then using it: 30 seconds each time!
+
+================================================================
+
+THIS IS 100% FREE SOFTWARE!
+
+- No registration needed
+- No hidden costs
+- No time limits
+- Use for personal or commercial projects
+- See LICENSE file for details
+
+================================================================
+
+NEED HELP?
+
+After downloading, read these files IN THIS ORDER:
+
+1. SIMPLE_GUIDE.txt (super easy, step-by-step)
+2. START_HERE.txt (which other guides to read)
+3. BEGINNER_GUIDE.md (if you need more help)
+
+================================================================
+
+DOWNLOAD LINK AGAIN:
+
+https://lora-prep.preview.emergentagent.com/api/files/download/lora_image_processor_v1.0.0.zip
+
+Save to Desktop, then extract, then open SIMPLE_GUIDE.txt!
+
+================================================================
