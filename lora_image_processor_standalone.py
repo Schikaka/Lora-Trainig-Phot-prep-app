@@ -436,6 +436,7 @@ For more info: https://github.com/yourusername/lora-image-processor
     parser.add_argument('input_zip', help='Path to input ZIP file containing images')
     parser.add_argument('-o', '--output', help='Output directory (default: auto-generated)', default=None)
     parser.add_argument('--no-zip', action='store_true', help='Do not create output ZIP file')
+    parser.add_argument('--skip-quality-check', action='store_true', help='Skip quality filtering (process all images)')
     parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode (minimal output)')
     parser.add_argument('-v', '--version', action='version', version=f'%(prog)s {__version__}')
     
