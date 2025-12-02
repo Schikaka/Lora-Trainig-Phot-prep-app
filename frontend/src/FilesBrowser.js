@@ -131,23 +131,36 @@ const FilesBrowser = () => {
                   key={index}
                   className="border border-gray-200 rounded-lg p-4 hover:border-purple-300 hover:shadow-md transition-all"
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className="text-2xl">📦</span>
-                        <h3 className="text-lg font-semibold text-gray-800">{file.filename}</h3>
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <span className="text-2xl">📦</span>
+                          <h3 className="text-lg font-semibold text-gray-800">{file.filename}</h3>
+                        </div>
+                        <div className="flex gap-4 text-sm text-gray-600">
+                          <span>📊 Size: {formatBytes(file.size)}</span>
+                          <span>🕐 Created: {formatDate(file.created)}</span>
+                        </div>
                       </div>
-                      <div className="flex gap-4 text-sm text-gray-600">
-                        <span>📊 Size: {formatBytes(file.size)}</span>
-                        <span>🕐 Created: {formatDate(file.created)}</span>
-                      </div>
+                      <button
+                        onClick={() => handleDownload(file.filename)}
+                        className="ml-4 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg font-semibold hover:from-green-600 hover:to-emerald-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all"
+                      >
+                        📥 Download
+                      </button>
                     </div>
-                    <button
-                      onClick={() => handleDownload(file.filename)}
-                      className="ml-4 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg font-semibold hover:from-green-600 hover:to-emerald-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all"
-                    >
-                      📥 Download
-                    </button>
+                    <div className="text-xs text-gray-500 bg-gray-50 rounded px-3 py-2">
+                      <span className="font-semibold">Direct link:</span>{' '}
+                      <a 
+                        href={`${API}/files/download/${file.filename}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-purple-600 hover:underline break-all"
+                      >
+                        {`${BACKEND_URL}/api/files/download/${file.filename}`}
+                      </a>
+                    </div>
                   </div>
                 </div>
               ))}
