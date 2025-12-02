@@ -544,9 +544,26 @@ For more info: https://github.com/yourusername/lora-image-processor
     
     args = parser.parse_args()
     
-    # Get output size selection if not provided
+    # Get keyword for file naming FIRST
+    keyword = args.keyword
+    if not args.quiet and not keyword:
+        print("\n" + "=" * 60)
+        print("  KEYWORD FOR FILE NAMING")
+        print("=" * 60)
+        print("\nFor LoRA training, all images should have consistent names")
+        print("with your concept keyword (e.g., 'MyDaughter', 'AlexSmith').")
+        print("\nFiles will be renamed to: [keyword]_001.png, [keyword]_002.png, etc.")
+        print("\nPress Enter to skip and use original filenames.")
+        keyword = input("\nEnter keyword: ").strip()
+        if keyword:
+            # Clean keyword (remove spaces, special chars)
+            keyword = "".join(c for c in keyword if c.isalnum() or c in ('_', '-'))
+            if not keyword:
+                keyword = None
+    
+    # Get output size selection - ALWAYS ASK if not in quiet mode
     output_sizes = args.sizes
-    if not args.quiet and args.sizes == 'both':
+    if not args.quiet:
         print("\n" + "=" * 60)
         print("  CHOOSE OUTPUT SIZE")
         print("=" * 60)
@@ -567,23 +584,6 @@ For more info: https://github.com/yourusername/lora-image-processor
             output_sizes = 'both'
         else:
             output_sizes = '512x512'  # Default for 1 or Enter
-    
-    # Get keyword for file naming
-    keyword = args.keyword
-    if not args.quiet and not keyword:
-        print("\n" + "=" * 60)
-        print("  KEYWORD FOR FILE NAMING")
-        print("=" * 60)
-        print("\nFor LoRA training, all images should have consistent names")
-        print("with your concept keyword (e.g., 'MyDaughter', 'AlexSmith').")
-        print("\nFiles will be renamed to: [keyword]_001.png, [keyword]_002.png, etc.")
-        print("\nPress Enter to skip and use original filenames.")
-        keyword = input("\nEnter keyword: ").strip()
-        if keyword:
-            # Clean keyword (remove spaces, special chars)
-            keyword = "".join(c for c in keyword if c.isalnum() or c in ('_', '-'))
-            if not keyword:
-                keyword = None
     
     # Process the images
     success = process_zip_file(
