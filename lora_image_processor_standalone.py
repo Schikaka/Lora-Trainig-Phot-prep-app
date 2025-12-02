@@ -333,7 +333,10 @@ def process_zip_file(zip_path, output_dir=None, create_zip=True, verbose=True, s
     # Create output directory
     if output_dir is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        output_dir = zip_path.parent / f"lora_processed_{timestamp}"
+        # Always create output in the 'output/' folder, not next to the input zip
+        output_base = Path('output')
+        output_base.mkdir(exist_ok=True, parents=True)
+        output_dir = output_base / f"lora_processed_{timestamp}"
     else:
         output_dir = Path(output_dir)
     
