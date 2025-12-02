@@ -37,9 +37,10 @@ Download ALL these files to use the tool:
 MINIMUM FILES NEEDED (If you know Python):
 ✅ lora_image_processor_standalone.py
 ✅ requirements.txt
+✅ LICENSE (required for distribution)
 
 RECOMMENDED FOR BEGINNERS:
-✅ All 10 files
+✅ All 12 files
 
 =====================================
 
