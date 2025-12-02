@@ -1,0 +1,135 @@
+================================================================
+  LORA IMAGE PROCESSOR v1.1.0
+  IMPROVED VERSION WITH SIZE OPTIONS
+================================================================
+
+DOWNLOAD LINK:
+
+https://lora-prep.preview.emergentagent.com/api/files/download/lora_image_processor_v1.1.0.zip
+
+================================================================
+
+🎉 WHAT'S NEW IN v1.1.0:
+
+✅ Choose output sizes:
+   - Both 512x512 and 512x768 (default)
+   - Only 512x512 (close-up faces)
+   - Only 512x768 (portraits)  
+   - Only 1024x1024 (for SDXL training)
+
+✅ Better organization:
+   - input/ folder (put your ZIP files here)
+   - output/ folder (get processed images here)
+   - docs/ folder (all documentation)
+
+✅ Simpler README:
+   - Step-by-step instructions
+   - Exact commands to copy-paste
+   - Easy to follow format
+
+================================================================
+
+FOLDER STRUCTURE:
+
+lora_image_processor/
+├── README.txt ⭐ START HERE!
+├── lora_image_processor_standalone.py
+├── requirements.txt
+├── run_windows.bat (double-click this!)
+├── run_mac_linux.sh
+├── check_setup.py
+├── LICENSE
+├── input/ (PUT YOUR ZIP FILES HERE)
+├── output/ (GET PROCESSED FILES HERE)
+└── docs/ (all guides)
+
+================================================================
+
+QUICK START:
+
+1. Download ZIP from link above
+2. Extract to Desktop
+3. Open README.txt
+4. Follow the steps (copy-paste commands)
+5. Done!
+
+Takes 5-10 minutes first time.
+Then 30 seconds every time you use it!
+
+================================================================
+
+SIZE OPTIONS EXPLAINED:
+
+Both 512x512 and 512x768 (DEFAULT):
+  → Creates 2 versions of each image
+  → Best for complete training dataset
+  → Recommended for most users
+
+Only 512x512:
+  → Square images
+  → Perfect for close-up face training
+  → SD1.5 compatible
+
+Only 512x768:
+  → Portrait images
+  → Better for full-body shots
+  → SD1.5 compatible
+
+Only 1024x1024:
+  → Large square images
+  → Perfect for SDXL training
+  → Higher quality but bigger files
+
+================================================================
+
+HOW TO CHOOSE SIZE:
+
+For SD1.5 LoRA:
+  → Use 512x512 or 512x768 (or both)
+
+For SDXL LoRA:
+  → Use 1024x1024
+
+Not sure?
+  → Use "both" (default)
+  → You get both sizes and can choose later!
+
+================================================================
+
+INSTALLATION (ONE TIME):
+
+1. Install Python (python.org)
+2. Extract ZIP
+3. Open folder in cmd/terminal
+4. Run: pip install -r requirements.txt
+5. Done!
+
+================================================================
+
+USAGE (EVERY TIME):
+
+1. Put photos ZIP in input/ folder
+2. Double-click run_windows.bat (or run_mac_linux.sh)
+3. Choose size option (1-4)
+4. Wait for processing
+5. Get output from output/ folder
+
+OR manual command:
+
+python lora_image_processor_standalone.py input/photos.zip --sizes both
+
+================================================================
+
+100% FREE SOFTWARE (MIT License)
+
+Use for personal or commercial projects!
+
+================================================================
+
+DOWNLOAD NOW:
+
+https://lora-prep.preview.emergentagent.com/api/files/download/lora_image_processor_v1.1.0.zip
+
+Extract and open README.txt!
+
+================================================================
