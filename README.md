@@ -69,7 +69,9 @@ run_windows.bat
 
 If Windows blocks it → right-click → Properties → Unblock → Apply → run again.
 
-The script will ask you:
+The script will ask you two questions:
+
+### Question 1: Output size
 
 ```
 Choose output size:
@@ -80,6 +82,33 @@ Choose output size:
 ```
 
 Type `1`, `2`, `3`, or `4` and press Enter.
+
+### Question 2: Keyword for naming (NEW!)
+
+```
+KEYWORD FOR FILE NAMING (LoRA Training)
+
+For LoRA training, files should be named with your concept keyword.
+Example: MyDaughter, AlexSmith, Melodija
+
+Files will be renamed to: [keyword]_001.png, [keyword]_002.png, etc.
+
+Enter keyword:
+```
+
+Type your keyword (e.g., `MyDaughter`) and press Enter.
+
+**Or press Enter without typing to keep original filenames.**
+
+### Why this matters for LoRA training
+
+LoRA models learn better when all training images share a **consistent naming pattern** with your concept keyword. This helps the AI understand that all images belong to the same person or subject.
+
+**Example:** If your keyword is `Melodija`, files become:
+- `Melodija_001.png`
+- `Melodija_002.png`
+- `Melodija_003.png`
+- etc.
 
 ---
 
