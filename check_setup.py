@@ -2,6 +2,10 @@
 """
 Simple setup checker for LoRA Image Processor
 Run this to verify everything is installed correctly
+
+Copyright (c) 2025 LoRA Image Processor
+Licensed under MIT License - Free and Open Source Software
+See LICENSE file for details
 """
 
 import sys
