@@ -373,6 +373,7 @@ def process_zip_file(zip_path, output_dir=None, create_zip=True, verbose=True, s
         skipped_count = 0
         face_angles = []
         skipped_reasons = []
+        no_face_detected = []
         
         for i, img_path in enumerate(image_files, 1):
             if verbose:
@@ -385,8 +386,11 @@ def process_zip_file(zip_path, output_dir=None, create_zip=True, verbose=True, s
                     skipped_reasons.extend(result.get('reason', []))
                 else:
                     processed_count += len(result.get('files', []))
-                    if result.get('face_angle'):
-                        face_angles.append(result['face_angle'])
+                    face_angle = result.get('face_angle')
+                    if face_angle and face_angle != 'no_face':
+                        face_angles.append(face_angle)
+                    elif face_angle == 'no_face':
+                        no_face_detected.append(img_path.name)
             else:
                 # Old return format compatibility
                 processed_count += len(result) if result else 0
