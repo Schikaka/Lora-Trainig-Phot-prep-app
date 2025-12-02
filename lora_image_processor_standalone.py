@@ -146,7 +146,7 @@ def check_image_quality(image):
     }
 
 def smart_crop_face(image, target_width, target_height, verbose=True):
-    """Crop image focusing on detected face with intelligent padding based on angle"""
+    """Crop image focusing on detected face with generous padding to avoid cutting faces"""
     img_array = np.array(image)
     height, width = img_array.shape[:2]
     
@@ -162,19 +162,20 @@ def smart_crop_face(image, target_width, target_height, verbose=True):
         face_center_x = x + w // 2
         face_center_y = y + h // 2
         
-        # Adjust padding based on face angle for better context
+        # MUCH MORE GENEROUS PADDING to avoid cutting faces
+        # This ensures we get the whole head, hair, and shoulders
         if angle == 'profile':
-            # Profile view - include more horizontal space, less vertical
-            padding_h = 2.2
-            padding_v = 1.6
+            # Profile view - need more horizontal space
+            padding_h = 3.0  # Very generous
+            padding_v = 2.5
         elif angle == 'tilted':
-            # Tilted - symmetric padding
-            padding_h = 1.8
-            padding_v = 1.8
+            # Tilted - symmetric generous padding
+            padding_h = 2.8
+            padding_v = 2.8
         else:  # frontal or 3/4
-            # Front view - include shoulders and hair
-            padding_h = 1.8 if target_height > target_width else 1.5
-            padding_v = 2.0 if target_height > target_width else 1.5
+            # Front view - include full head, hair, shoulders
+            padding_h = 2.5 if target_height > target_width else 2.2
+            padding_v = 3.0 if target_height > target_width else 2.5
         
         crop_width = int(w * padding_h)
         crop_height = int(h * padding_v)
@@ -186,34 +187,44 @@ def smart_crop_face(image, target_width, target_height, verbose=True):
         else:
             crop_width = int(crop_height * aspect_ratio)
         
-        # For portrait shots, shift crop slightly up to include more head/hair
+        # For portrait shots, shift crop up to include more hair/top of head
         if target_height > target_width:
-            face_center_y = int(face_center_y - h * 0.1)
+            # Shift up by 15% of face height to get more hair
+            face_center_y = int(face_center_y - h * 0.15)
+        else:
+            # Square crops - slight shift up
+            face_center_y = int(face_center_y - h * 0.05)
         
-        # Calculate crop boundaries
-        left = max(0, face_center_x - crop_width // 2)
-        top = max(0, face_center_y - crop_height // 2)
-        right = min(width, left + crop_width)
-        bottom = min(height, top + crop_height)
+        # Calculate crop boundaries with maximum area
+        left = face_center_x - crop_width // 2
+        top = face_center_y - crop_height // 2
+        right = left + crop_width
+        bottom = top + crop_height
         
-        # Adjust if crop goes out of bounds
-        if right - left < crop_width:
-            if left == 0:
-                right = min(width, crop_width)
-            else:
-                left = max(0, width - crop_width)
+        # Adjust if crop goes out of bounds - prefer keeping the face fully visible
+        if left < 0:
+            left = 0
+            right = min(width, crop_width)
+        if right > width:
+            right = width
+            left = max(0, width - crop_width)
+        if top < 0:
+            top = 0
+            bottom = min(height, crop_height)
+        if bottom > height:
+            bottom = height
+            top = max(0, height - crop_height)
         
-        if bottom - top < crop_height:
-            if top == 0:
-                bottom = min(height, crop_height)
-            else:
-                top = max(0, height - crop_height)
+        # Ensure we have some crop area
+        if right <= left or bottom <= top:
+            # Fall back to center crop
+            left, top, right, bottom = 0, 0, width, height
         
         cropped = image.crop((left, top, right, bottom))
         if verbose:
-            print(f"  ✓ Face detected ({angle} view) - intelligent crop applied")
+            print(f"  ✓ Face detected ({angle} view) - generous crop with full context")
     else:
-        # No face detected, do center crop
+        # No face detected - use intelligent center crop with edge detection
         aspect_ratio = target_width / target_height
         current_ratio = width / height
         
@@ -228,7 +239,7 @@ def smart_crop_face(image, target_width, target_height, verbose=True):
             top = (height - new_height) // 2
             cropped = image.crop((0, top, width, top + new_height))
         if verbose:
-            print(f"  ✓ Center cropped (no face detected)")
+            print(f"  ⚠ No face detected - using smart center crop")
     
     return cropped, face_data
 
