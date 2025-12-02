@@ -89,17 +89,7 @@ const ImageProcessor = () => {
     window.open(downloadUrl, '_blank');
   };
 
-  const handleReset = async () => {
-    // Cleanup server files if result exists
-    if (result?.session_id) {
-      try {
-        await axios.delete(`${API}/cleanup/${result.session_id}`);
-      } catch (err) {
-        // Ignore cleanup errors
-        console.log('Cleanup completed or file already removed');
-      }
-    }
-    
+  const handleReset = () => {
     setFile(null);
     setResult(null);
     setError(null);
