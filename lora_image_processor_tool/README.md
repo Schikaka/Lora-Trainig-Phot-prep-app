@@ -52,35 +52,34 @@ python -m pip install -r requirements.txt
 
 ---
 
-## 3. Put your photos in the INPUT folder
+## 3. Prepare your photos ZIP file
 
-Look for the folder:
-
-```
-input/
-```
-
-Put your ZIP file with photos here. Name it anything you want:
+Create a ZIP file with your photos. Name it anything you want:
 
 ```
-input/my_photos.zip
+my_photos.zip
 ```
 
-Or drag your ZIP file into the **input** folder.
+You can place it:
+- In the same folder as the script
+- Or in the **input/** folder (optional)
+- Or anywhere - you'll specify the path when running
 
 ---
 
-## 4. Run the Windows version
+## 4. Run the script
 
-You have a file:
-
+### Quick Method:
+**Double-click** the Python script file directly:
 ```
-run_windows.bat
+lora_image_processor_standalone.py
 ```
 
-**Double-click it.**
-
-If Windows blocks it → right-click → Properties → Unblock → Apply → run again.
+### Or use Command Line:
+Open `cmd` or PowerShell in this folder, then run:
+```
+python lora_image_processor_standalone.py your_photos.zip
+```
 
 The script will ask you two questions:
 

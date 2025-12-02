@@ -545,6 +545,30 @@ For more info: https://github.com/yourusername/lora-image-processor
     
     args = parser.parse_args()
     
+    # Get output size selection if not provided
+    output_sizes = args.sizes
+    if not args.quiet and args.sizes == 'both':
+        print("\n" + "=" * 60)
+        print("  CHOOSE OUTPUT SIZE")
+        print("=" * 60)
+        print("\nOptions:")
+        print("  1. Both 512x512 and 512x768 (default, recommended)")
+        print("  2. Only 512x512 (close-up faces)")
+        print("  3. Only 512x768 (portraits)")
+        print("  4. Only 1024x1024 (SDXL training)")
+        print("\nPress Enter for option 1 (recommended)")
+        
+        choice = input("\nEnter your choice (1-4): ").strip()
+        
+        if choice == '2':
+            output_sizes = '512x512'
+        elif choice == '3':
+            output_sizes = '512x768'
+        elif choice == '4':
+            output_sizes = '1024x1024'
+        else:
+            output_sizes = 'both'  # Default for 1 or Enter
+    
     # Get keyword for file naming
     keyword = args.keyword
     if not args.quiet and not keyword:
@@ -569,7 +593,7 @@ For more info: https://github.com/yourusername/lora-image-processor
         create_zip=not args.no_zip,
         verbose=not args.quiet,
         skip_quality_check=args.skip_quality_check,
-        output_sizes=args.sizes,
+        output_sizes=output_sizes,
         keyword=keyword
     )
     
