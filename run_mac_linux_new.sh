@@ -91,12 +91,30 @@ case $CHOICE in
 esac
 
 echo ""
+echo "===================================="
+echo "KEYWORD FOR FILE NAMING (LoRA Training)"
+echo "===================================="
+echo ""
+echo "For LoRA training, files should be named with your concept keyword."
+echo "Example: MyDaughter, AlexSmith, Melodija"
+echo ""
+echo "Files will be renamed to: [keyword]_001.png, [keyword]_002.png, etc."
+echo ""
+echo "Press Enter to skip and keep original filenames."
+echo ""
+read -p "Enter keyword: " KEYWORD
+
+echo ""
 echo "Starting processing..."
 echo "===================================="
 echo ""
 
-# Run the processor
-python3 lora_image_processor_standalone.py "$ZIPFILE" -o output --sizes $SIZES
+# Run the processor with or without keyword
+if [ -z "$KEYWORD" ]; then
+    python3 lora_image_processor_standalone.py "$ZIPFILE" -o output --sizes $SIZES
+else
+    python3 lora_image_processor_standalone.py "$ZIPFILE" -o output --sizes $SIZES --keyword "$KEYWORD"
+fi
 
 echo ""
 echo "===================================="
