@@ -2,6 +2,7 @@
 
 echo "===================================="
 echo "   LoRA Image Processor"
+echo "   FREE SOFTWARE (MIT License)"
 echo "===================================="
 echo ""
 
