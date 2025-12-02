@@ -415,7 +415,7 @@ def process_zip_file(zip_path, output_dir=None, create_zip=True, verbose=True, s
                 # Old return format compatibility
                 processed_count += len(result) if result else 0
                 if keyword:
-                    file_counter += len(result) if result else 0
+                    file_counter += 1  # Increment once per input image
         
         if verbose:
             print(f"\n" + "=" * 60)
