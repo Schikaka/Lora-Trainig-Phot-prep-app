@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ImageProcessor from "./ImageProcessor";
 import ErrorBoundary from "./ErrorBoundary";
 import TestDownload from "./TestDownload";
+import FilesBrowser from "./FilesBrowser";
 
 function App() {
   return (
@@ -10,7 +11,8 @@ function App() {
       <div className="App">
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<ImageProcessor />} />
+            <Route path="/" element={<FilesBrowser />} />
+            <Route path="/upload" element={<ImageProcessor />} />
             <Route path="/test" element={<TestDownload />} />
           </Routes>
         </BrowserRouter>
