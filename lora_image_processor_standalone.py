@@ -382,18 +382,27 @@ def process_zip_file(zip_path, output_dir=None, create_zip=True, verbose=True, s
         face_angles = []
         skipped_reasons = []
         no_face_detected = []
+        file_counter = 1  # Start numbering from 001
         
         for i, img_path in enumerate(image_files, 1):
             if verbose:
                 print(f"\n[{i}/{len(image_files)}]")
-            result = process_single_image(img_path, output_dir, img_path.name, verbose, skip_quality_check, output_sizes)
+            
+            # Pass counter only if using keyword naming
+            counter = file_counter if keyword else None
+            result = process_single_image(img_path, output_dir, img_path.name, verbose, skip_quality_check, output_sizes, counter, keyword)
             
             if isinstance(result, dict):
                 if result.get('skipped'):
                     skipped_count += 1
                     skipped_reasons.extend(result.get('reason', []))
                 else:
-                    processed_count += len(result.get('files', []))
+                    num_files = len(result.get('files', []))
+                    processed_count += num_files
+                    # Increment counter by number of files created (for both sizes, counter increases by 2)
+                    if keyword:
+                        file_counter += num_files
+                    
                     face_angle = result.get('face_angle')
                     if face_angle and face_angle != 'no_face':
                         face_angles.append(face_angle)
@@ -402,6 +411,8 @@ def process_zip_file(zip_path, output_dir=None, create_zip=True, verbose=True, s
             else:
                 # Old return format compatibility
                 processed_count += len(result) if result else 0
+                if keyword:
+                    file_counter += len(result) if result else 0
         
         if verbose:
             print(f"\n" + "=" * 60)
