@@ -228,39 +228,43 @@ def process_single_image(image_path, output_dir, filename, verbose=True, skip_qu
         
         results = []
         face_angles = []
-        
-        # Process for 512x512 (close-up face)
-        if verbose:
-            print(f"  Creating 512x512 version...")
-        cropped_square, face_data = smart_crop_face(img, 512, 512, verbose)
-        if face_data:
-            face_angles.append(face_data['angle'])
-        if cropped_square.size != (512, 512):
-            cropped_square = upscale_image(cropped_square, 512, 512)
-        
-        # Save 512x512 version
         base_name = Path(filename).stem
-        square_filename = f"{base_name}_512x512.png"
-        square_path = output_dir / square_filename
-        cropped_square.save(square_path, 'PNG', quality=95)
-        results.append(square_filename)
-        if verbose:
-            print(f"  ✓ Saved: {square_filename}")
         
-        # Process for 512x768 (portrait)
-        if verbose:
-            print(f"  Creating 512x768 version...")
-        cropped_portrait, _ = smart_crop_face(img, 512, 768, verbose)
-        if cropped_portrait.size != (512, 768):
-            cropped_portrait = upscale_image(cropped_portrait, 512, 768)
+        # Define size options
+        size_configs = {
+            '512x512': (512, 512, 'square'),
+            '512x768': (512, 768, 'portrait'),
+            '1024x1024': (1024, 1024, 'large square')
+        }
         
-        # Save 512x768 version
-        portrait_filename = f"{base_name}_512x768.png"
-        portrait_path = output_dir / portrait_filename
-        cropped_portrait.save(portrait_path, 'PNG', quality=95)
-        results.append(portrait_filename)
-        if verbose:
-            print(f"  ✓ Saved: {portrait_filename}")
+        # Determine which sizes to create
+        if output_sizes == 'both':
+            sizes_to_create = ['512x512', '512x768']
+        else:
+            sizes_to_create = [output_sizes]
+        
+        # Process each requested size
+        for size_key in sizes_to_create:
+            width, height, description = size_configs[size_key]
+            
+            if verbose:
+                print(f"  Creating {width}x{height} version...")
+            
+            cropped, face_data = smart_crop_face(img, width, height, verbose)
+            if face_data and not face_angles:  # Only record angle once
+                face_angles.append(face_data['angle'])
+            
+            if cropped.size != (width, height):
+                cropped = upscale_image(cropped, width, height)
+            
+            # Save version
+            output_filename = f"{base_name}_{width}x{height}.png"
+            output_path = output_dir / output_filename
+            cropped.save(output_path, 'PNG', quality=95)
+            results.append(output_filename)
+            
+            if verbose:
+                print(f"  ✓ Saved: {output_filename}")
         
         return {
             'skipped': False,
