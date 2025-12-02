@@ -416,6 +416,24 @@ def process_zip_file(zip_path, output_dir=None, create_zip=True, verbose=True, s
                     print(f"  • {count}x {reason}")
                 print(f"\nTip: Use better lighting and sharper images for best LoRA results")
             
+            # Face detection report
+            if no_face_detected:
+                print(f"\n⚠️  FACE DETECTION REPORT:")
+                print(f"=" * 60)
+                print(f"  {len(no_face_detected)} images had no face detected")
+                print(f"  These were cropped using smart center crop instead.")
+                if len(no_face_detected) <= 10:
+                    print(f"\n  Files:")
+                    for filename in no_face_detected:
+                        print(f"    • {filename}")
+                else:
+                    print(f"\n  (Too many to list - check output visually)")
+                print(f"\n  💡 Tip: These images might be:")
+                print(f"     - Side/back views")
+                print(f"     - Face too small")
+                print(f"     - Poor lighting")
+                print(f"     - Non-face subjects")
+            
             # Variety analysis
             if face_angles:
                 print(f"\n📊 DATASET VARIETY ANALYSIS:")
@@ -425,6 +443,10 @@ def process_zip_file(zip_path, output_dir=None, create_zip=True, verbose=True, s
                     angle_counts[angle] = angle_counts.get(angle, 0) + 1
                 
                 total_faces = len(face_angles)
+                total_processed = len(image_files) - skipped_count
+                print(f"  Faces detected: {total_faces}/{total_processed} images ({(total_faces/total_processed*100):.1f}%)")
+                print(f"")
+                
                 for angle, count in sorted(angle_counts.items()):
                     percentage = (count / total_faces) * 100
                     print(f"  • {angle.capitalize()}: {count} images ({percentage:.1f}%)")
