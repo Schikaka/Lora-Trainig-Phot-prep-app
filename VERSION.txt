@@ -1,6 +1,11 @@
 LoRA Image Processor
-Version: 1.4.1
+Version: 1.4.2
 Release Date: December 2, 2025
+
+Bug Fixes in v1.4.2:
+- Fixed: No more duplicate files! Each input photo now creates exactly ONE output file (or two if "both" sizes selected)
+- Fixed: File numbering is now sequential (001, 002, 003) with no gaps
+- Fixed: Output files now correctly go to output/ folder instead of input/ folder
 
 Bug Fixes in v1.4.1:
 - Fixed: Resolution selection prompt now always appears
