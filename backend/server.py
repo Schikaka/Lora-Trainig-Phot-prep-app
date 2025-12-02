@@ -300,6 +300,42 @@ async def cleanup_session(session_id: str):
     
     return {"status": "not_found", "message": "No files to clean up"}
 
+@api_router.get("/files")
+async def list_public_files():
+    """List all available files in public downloads"""
+    files = []
+    for file_path in PUBLIC_DOWNLOADS.iterdir():
+        if file_path.is_file() and file_path.suffix == '.zip':
+            stat = file_path.stat()
+            files.append({
+                "filename": file_path.name,
+                "size": stat.st_size,
+                "created": datetime.fromtimestamp(stat.st_ctime).isoformat(),
+                "download_url": f"/api/files/download/{file_path.name}"
+            })
+    
+    # Sort by creation time, newest first
+    files.sort(key=lambda x: x['created'], reverse=True)
+    return {"files": files, "count": len(files)}
+
+@api_router.get("/files/download/{filename}")
+async def download_public_file(filename: str):
+    """Download a file from public downloads"""
+    file_path = PUBLIC_DOWNLOADS / filename
+    
+    if not file_path.exists() or not file_path.is_file():
+        raise HTTPException(status_code=404, detail="File not found")
+    
+    # Security: ensure filename doesn't contain path traversal
+    if '..' in filename or '/' in filename:
+        raise HTTPException(status_code=400, detail="Invalid filename")
+    
+    return FileResponse(
+        path=file_path,
+        filename=filename,
+        media_type="application/zip"
+    )
+
 # Include the router in the main app
 app.include_router(api_router)
 
