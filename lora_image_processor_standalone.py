@@ -198,7 +198,7 @@ def upscale_image(image, target_width, target_height):
     """Upscale image to target size using Lanczos resampling"""
     return image.resize((target_width, target_height), Image.Resampling.LANCZOS)
 
-def process_single_image(image_path, output_dir, filename, verbose=True):
+def process_single_image(image_path, output_dir, filename, verbose=True, skip_quality_check=False):
     """Process a single image to create both 512x512 and 512x768 versions"""
     try:
         if verbose:
@@ -209,12 +209,24 @@ def process_single_image(image_path, output_dir, filename, verbose=True):
         if verbose:
             print(f"  Original size: {img.size[0]}x{img.size[1]}")
         
+        # Quality check
+        if not skip_quality_check:
+            quality = check_image_quality(img)
+            if not quality['passed']:
+                if verbose:
+                    print(f"  ⚠ Quality issues: {', '.join(quality['issues'])}")
+                    print(f"  ✗ Skipped (poor quality)")
+                return {'skipped': True, 'reason': quality['issues'], 'quality': quality}
+        
         results = []
+        face_angles = []
         
         # Process for 512x512 (close-up face)
         if verbose:
             print(f"  Creating 512x512 version...")
-        cropped_square = smart_crop_face(img, 512, 512, verbose)
+        cropped_square, face_data = smart_crop_face(img, 512, 512, verbose)
+        if face_data:
+            face_angles.append(face_data['angle'])
         if cropped_square.size != (512, 512):
             cropped_square = upscale_image(cropped_square, 512, 512)
         
@@ -230,7 +242,7 @@ def process_single_image(image_path, output_dir, filename, verbose=True):
         # Process for 512x768 (portrait)
         if verbose:
             print(f"  Creating 512x768 version...")
-        cropped_portrait = smart_crop_face(img, 512, 768, verbose)
+        cropped_portrait, _ = smart_crop_face(img, 512, 768, verbose)
         if cropped_portrait.size != (512, 768):
             cropped_portrait = upscale_image(cropped_portrait, 512, 768)
         
@@ -242,10 +254,14 @@ def process_single_image(image_path, output_dir, filename, verbose=True):
         if verbose:
             print(f"  ✓ Saved: {portrait_filename}")
         
-        return results
+        return {
+            'skipped': False,
+            'files': results,
+            'face_angle': face_angles[0] if face_angles else 'no_face'
+        }
     except Exception as e:
         print(f"  ✗ Error processing {filename}: {str(e)}")
-        return []
+        return {'skipped': True, 'reason': ['processing_error'], 'error': str(e)}
 
 def process_zip_file(zip_path, output_dir=None, create_zip=True, verbose=True):
     """Process all images in a ZIP file"""
