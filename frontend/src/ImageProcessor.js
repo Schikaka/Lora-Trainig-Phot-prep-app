@@ -292,46 +292,14 @@ const ImageProcessor = () => {
                 <div className="flex gap-4">
                   <button
                     onClick={handleDownload}
-                    disabled={downloading}
-                    className={`flex-1 py-4 px-6 rounded-xl font-semibold text-lg shadow-lg transition-all ${
-                      downloading
-                        ? 'bg-gray-400 cursor-not-allowed'
-                        : 'bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 hover:shadow-xl transform hover:-translate-y-0.5'
-                    }`}
+                    className="flex-1 py-4 px-6 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-semibold text-lg hover:from-green-600 hover:to-emerald-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all"
                     data-testid="download-button"
                   >
-                    {downloading ? (
-                      <span className="flex items-center justify-center text-white">
-                        <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
-                          <circle
-                            className="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            strokeWidth="4"
-                            fill="none"
-                          />
-                          <path
-                            className="opacity-75"
-                            fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                          />
-                        </svg>
-                        Downloading...
-                      </span>
-                    ) : (
-                      '📥 Download Processed Images'
-                    )}
+                    📥 Download Processed Images
                   </button>
                   <button
                     onClick={handleReset}
-                    disabled={downloading}
-                    className={`py-4 px-6 rounded-xl font-semibold text-lg transition-all ${
-                      downloading
-                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                    }`}
+                    className="py-4 px-6 bg-gray-200 text-gray-700 rounded-xl font-semibold text-lg hover:bg-gray-300 transition-all"
                     data-testid="reset-button"
                   >
                     ↻ Process Another
