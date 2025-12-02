@@ -1,0 +1,148 @@
+=====================================
+  LORA IMAGE PROCESSOR
+  FREE AND OPEN SOURCE SOFTWARE
+=====================================
+
+🎉 THIS SOFTWARE IS 100% FREE! 🎉
+
+=====================================
+  LICENSE
+=====================================
+
+This software is released under the MIT License.
+
+What this means:
+✅ FREE to use (personal & commercial)
+✅ FREE to modify and customize
+✅ FREE to distribute and share
+✅ NO registration required
+✅ NO hidden costs
+✅ NO time limits
+✅ NO feature restrictions
+
+=====================================
+  YOU CAN:
+=====================================
+
+✅ Use it for personal projects
+✅ Use it for commercial projects
+✅ Modify the source code
+✅ Distribute modified versions
+✅ Include it in your products
+✅ Sell products that use it
+✅ Use it without attribution (but appreciated!)
+
+=====================================
+  YOU MUST:
+=====================================
+
+✅ Include the LICENSE file if distributing
+✅ Include copyright notice if distributing
+
+That's it! Very simple.
+
+=====================================
+  WARRANTY
+=====================================
+
+This software is provided "AS IS" without warranty.
+Use at your own risk.
+
+(Standard for free software - means we can't be
+sued if something goes wrong)
+
+=====================================
+  WHY IS IT FREE?
+=====================================
+
+Because:
+• We believe in open source
+• AI training tools should be accessible
+• Community improvements benefit everyone
+• It's the right thing to do
+
+=====================================
+  CONTRIBUTING
+=====================================
+
+Want to improve this tool?
+• Fork it on GitHub
+• Submit pull requests
+• Report bugs
+• Suggest features
+• Share with others!
+
+Repository: github.com/yourusername/lora-image-processor
+
+=====================================
+  SUPPORT
+=====================================
+
+This is free software maintained by volunteers.
+
+Support available through:
+• GitHub Issues (bug reports)
+• GitHub Discussions (questions)
+• Community forums
+
+No paid support, but community is helpful!
+
+=====================================
+  ATTRIBUTION (OPTIONAL)
+=====================================
+
+If you want to give credit:
+
+"Image processing powered by LoRA Image Processor"
+"https://github.com/yourusername/lora-image-processor"
+
+But this is NOT required!
+
+=====================================
+  DONATIONS (OPTIONAL)
+=====================================
+
+This software is free forever.
+
+If you want to support development:
+• Star the project on GitHub ⭐
+• Share it with others 📢
+• Contribute code 💻
+• Report bugs 🐛
+
+No monetary donations needed or expected.
+
+=====================================
+  LICENSE SUMMARY
+=====================================
+
+MIT License = Most permissive open source license
+
+✅ Commercial use allowed
+✅ Modification allowed
+✅ Distribution allowed
+✅ Private use allowed
+✅ No warranty
+✅ No liability
+
+Simple and straightforward!
+
+=====================================
+  FULL LICENSE TEXT
+=====================================
+
+See LICENSE file for complete legal text.
+
+In plain English:
+"Do whatever you want with this software,
+just include the copyright notice if you
+redistribute it."
+
+=====================================
+
+FREE SOFTWARE FOR EVERYONE! ❤️
+
+Questions? Check LICENSE file or GitHub.
+
+Made with love for the AI art community! 🎨
+=====================================
