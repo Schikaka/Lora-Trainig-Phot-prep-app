@@ -42,7 +42,13 @@ const FilesBrowser = () => {
 
   const handleDownload = (filename) => {
     const url = `${API}/files/download/${filename}`;
-    window.open(url, '_blank');
+    // Create a temporary anchor element and trigger click
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   };
 
   return (
