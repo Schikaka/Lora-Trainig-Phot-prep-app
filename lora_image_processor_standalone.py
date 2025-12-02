@@ -462,7 +462,8 @@ For more info: https://github.com/yourusername/lora-image-processor
         args.output,
         create_zip=not args.no_zip,
         verbose=not args.quiet,
-        skip_quality_check=args.skip_quality_check
+        skip_quality_check=args.skip_quality_check,
+        output_sizes=args.sizes
     )
     
     sys.exit(0 if success else 1)
