@@ -298,8 +298,14 @@ def process_single_image(image_path, output_dir, filename, verbose=True, skip_qu
             if cropped.size != (width, height):
                 cropped = upscale_image(cropped, width, height)
             
-            # Save version
-            output_filename = f"{base_name}_{width}x{height}.png"
+            # Generate filename with keyword if provided
+            if keyword and file_counter is not None:
+                # Use keyword_number format
+                output_filename = f"{keyword}_{file_counter:03d}.png"
+            else:
+                # Use original format
+                output_filename = f"{base_name}_{width}x{height}.png"
+            
             output_path = output_dir / output_filename
             cropped.save(output_path, 'PNG', quality=95)
             results.append(output_filename)
