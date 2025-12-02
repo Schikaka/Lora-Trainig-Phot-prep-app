@@ -108,23 +108,38 @@ def check_image_quality(image):
     }
 
 def smart_crop_face(image, target_width, target_height, verbose=True):
-    """Crop image focusing on detected face or center"""
+    """Crop image focusing on detected face with intelligent padding based on angle"""
     img_array = np.array(image)
     height, width = img_array.shape[:2]
     
     # Detect face
-    face = detect_face(img_array)
+    face_data = detect_face(img_array)
     
-    if face is not None:
+    if face_data is not None:
+        face = face_data['box']
+        angle = face_data['angle']
         x, y, w, h = face
+        
         # Calculate center of face
         face_center_x = x + w // 2
         face_center_y = y + h // 2
         
-        # Calculate crop area with face in center, with some padding
-        padding_factor = 1.8 if target_height > target_width else 1.5
-        crop_width = int(w * padding_factor)
-        crop_height = int(h * padding_factor)
+        # Adjust padding based on face angle for better context
+        if angle == 'profile':
+            # Profile view - include more horizontal space, less vertical
+            padding_h = 2.2
+            padding_v = 1.6
+        elif angle == 'tilted':
+            # Tilted - symmetric padding
+            padding_h = 1.8
+            padding_v = 1.8
+        else:  # frontal or 3/4
+            # Front view - include shoulders and hair
+            padding_h = 1.8 if target_height > target_width else 1.5
+            padding_v = 2.0 if target_height > target_width else 1.5
+        
+        crop_width = int(w * padding_h)
+        crop_height = int(h * padding_v)
         
         # Adjust to target aspect ratio
         aspect_ratio = target_width / target_height
@@ -132,6 +147,10 @@ def smart_crop_face(image, target_width, target_height, verbose=True):
             crop_height = int(crop_width / aspect_ratio)
         else:
             crop_width = int(crop_height * aspect_ratio)
+        
+        # For portrait shots, shift crop slightly up to include more head/hair
+        if target_height > target_width:
+            face_center_y = int(face_center_y - h * 0.1)
         
         # Calculate crop boundaries
         left = max(0, face_center_x - crop_width // 2)
@@ -154,7 +173,7 @@ def smart_crop_face(image, target_width, target_height, verbose=True):
         
         cropped = image.crop((left, top, right, bottom))
         if verbose:
-            print(f"  ✓ Face detected and centered")
+            print(f"  ✓ Face detected ({angle} view) - intelligent crop applied")
     else:
         # No face detected, do center crop
         aspect_ratio = target_width / target_height
@@ -173,7 +192,7 @@ def smart_crop_face(image, target_width, target_height, verbose=True):
         if verbose:
             print(f"  ✓ Center cropped (no face detected)")
     
-    return cropped
+    return cropped, face_data
 
 def upscale_image(image, target_width, target_height):
     """Upscale image to target size using Lanczos resampling"""
