@@ -92,12 +92,30 @@ if "%CHOICE%"=="3" set SIZES=512x768
 if "%CHOICE%"=="4" set SIZES=1024x1024
 
 echo.
+echo ====================================
+echo KEYWORD FOR FILE NAMING (LoRA Training)
+echo ====================================
+echo.
+echo For LoRA training, files should be named with your concept keyword.
+echo Example: MyDaughter, AlexSmith, Melodija
+echo.
+echo Files will be renamed to: [keyword]_001.png, [keyword]_002.png, etc.
+echo.
+echo Press Enter to skip and keep original filenames.
+echo.
+set /p KEYWORD="Enter keyword: "
+
+echo.
 echo Starting processing...
 echo ====================================
 echo.
 
-REM Run the processor
-python lora_image_processor_standalone.py "input\%ZIPFILE%" -o output --sizes %SIZES%
+REM Run the processor with or without keyword
+if "%KEYWORD%"=="" (
+    python lora_image_processor_standalone.py "input\%ZIPFILE%" -o output --sizes %SIZES%
+) else (
+    python lora_image_processor_standalone.py "input\%ZIPFILE%" -o output --sizes %SIZES% --keyword %KEYWORD%
+)
 
 echo.
 echo ====================================
