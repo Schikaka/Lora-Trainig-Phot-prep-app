@@ -1,5 +1,9 @@
 # 📦 LoRA Image Processor - Download Package
 
+## 🎉 100% FREE & OPEN SOURCE SOFTWARE
+
+Released under MIT License - Use freely for personal or commercial projects!
+
 ## 🎯 What This Tool Does
 
 Prepares your photos for AI (Stable Diffusion LoRA) training by:
@@ -8,7 +12,7 @@ Prepares your photos for AI (Stable Diffusion LoRA) training by:
 - ✅ Filtering out blurry/poor quality images
 - ✅ Analyzing your dataset variety
 
-**No coding knowledge needed!**
+**No coding knowledge needed! No registration! No costs!**
 
 ---
 
