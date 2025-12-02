@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 import os
 
@@ -15,22 +15,24 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
-    html_path = "/app/frontend/public/index.html"
-    if os.path.exists(html_path):
-        with open(html_path, 'r') as f:
-            return HTMLResponse(content=f.read())
-    return {"message": "LoRA Image Processor Download Server"}
+    return {"message": "LoRA Image Processor Download Server", "status": "ready"}
 
 @app.get("/api/files/download/{filename}")
 async def download_file(filename: str):
     file_path = f"/app/backend/public_downloads/{filename}"
+    print(f"Attempting to download: {file_path}")
+    print(f"File exists: {os.path.exists(file_path)}")
+    
     if os.path.exists(file_path):
         return FileResponse(
             path=file_path,
             filename=filename,
-            media_type='application/zip'
+            media_type='application/zip',
+            headers={
+                "Content-Disposition": f"attachment; filename={filename}"
+            }
         )
-    return {"error": "File not found"}
+    return {"error": "File not found", "path": file_path}
 
 if __name__ == "__main__":
     import uvicorn
