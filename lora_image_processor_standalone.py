@@ -3,9 +3,17 @@
 LoRA Image Processor - Standalone Script
 For Stable Diffusion LoRA Training
 
+Copyright (c) 2025 LoRA Image Processor
+Licensed under MIT License (see LICENSE file)
+
 Author: AI Assistant
-Version: 1.0
-License: MIT
+Version: 1.0.0
+License: MIT (Free and Open Source)
+Repository: github.com/yourusername/lora-image-processor
+
+This is FREE SOFTWARE released under the MIT License.
+You are free to use, modify, and distribute this software.
+See LICENSE file for full terms
 
 This script processes images for LoRA training by:
 - Detecting faces automatically
