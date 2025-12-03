@@ -1,6 +1,15 @@
 LoRA Image Processor
-Version: 1.4.2
+Version: 1.5.0
 Release Date: December 3, 2025
+
+=== NEW FEATURE in v1.5.0 ===
+
+✅ **Rejections Folder**: No files skipped anymore!
+   - ALL images are now processed (even poor quality ones)
+   - Good quality images → output/lora_processed_XXX/
+   - Low quality images → output/lora_processed_XXX/rejections/
+   - Review rejections folder and decide which to keep
+   - No more missing photos!
 
 === CRITICAL BUG FIXES in v1.4.2 ===
 
@@ -30,9 +39,10 @@ Release Date: December 3, 2025
 
 • Auto-detects input/input.zip
 • Keyword-based file renaming for LoRA training
-• Face detection with smart cropping
+• Face detection with smart cropping (falls back to center crop if no face)
 • Multiple resolution options (512x512, 512x768, 1024x1024)
-• Quality filtering (blur, brightness, contrast)
+• Quality filtering with rejections folder
 • Default: ONE file per photo
+• All photos processed - none skipped!
 
 License: MIT
