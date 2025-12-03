@@ -392,15 +392,19 @@ def generate_lora_filename(keyword, file_counter, face_data, target_width, targe
         filename = f"{keyword}_{class_word}_{file_counter:03d}.png"
     
     else:  # 8-9 = 20%
-        # Pattern C: keyword + FACIAL descriptor (analyzed from actual face)
+        # Pattern C: keyword + FACIAL descriptor (detected from actual image analysis)
         if image and face_data:
             detected_descriptors = analyze_image_characteristics(image, face_data)
             
-            # Priority: Most specific facial characteristics first
+            # Priority: Facial expressions > Face angles > Framing
             if 'laughing' in detected_descriptors:
                 descriptor = 'laughing'
             elif 'smiling' in detected_descriptors:
                 descriptor = 'smiling'
+            elif 'surprised' in detected_descriptors:
+                descriptor = 'surprised'
+            elif 'serious' in detected_descriptors:
+                descriptor = 'serious'
             elif 'profile' in detected_descriptors:
                 descriptor = 'profile'
             elif 'tilted' in detected_descriptors:
