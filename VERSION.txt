@@ -4,6 +4,13 @@ Release Date: December 3, 2025
 
 === NEW FEATURES in v1.5.0 ===
 
+✅ **Smart Cropping (NOT center!)**: Finds the most interesting part of the image
+   - For photos WITHOUT faces: crops to the area with most detail/edges
+   - NO longer always crops to center
+   - Works great for food, scenery, objects
+   - Can crop to left, right, top, bottom - wherever the detail is!
+   - Stays within image boundaries
+
 ✅ **Improved Face Detection**: Photos without faces go to rejections!
    - Photos WITH faces → output/lora_processed_XXX/
    - Photos WITHOUT faces (food, scenery, objects) → rejections/
@@ -47,7 +54,8 @@ Release Date: December 3, 2025
 
 • Auto-detects input/input.zip
 • Keyword-based file renaming for LoRA training
-• Face detection with smart cropping (falls back to center crop)
+• Face detection with smart cropping (generous padding for faces)
+• Intelligent cropping for non-face photos (finds most detailed area)
 • Photos without faces automatically go to rejections/
 • Multiple resolution options (512x512, 512x768, 1024x1024)
 • Quality filtering (blur: 100, brightness: 30-225, contrast: 30)
