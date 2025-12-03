@@ -295,57 +295,32 @@ def smart_crop_face(image, target_width, target_height, verbose=True):
         
         cropped = image.crop((left, top, right, bottom))
         if verbose:
-            print(f"  ✓ Face detected ({angle} view) - generous crop with full context")
+            confidence = face_data.get('confidence', 'full_face')
+            if confidence == 'features_based':
+                print(f"  ✓ Facial features detected - cropped around features")
+            else:
+                print(f"  ✓ Face detected ({angle} view) - generous crop with full context")
     else:
-        # No face detected - use intelligent crop to find most interesting area
+        # NO FACE OR FACIAL FEATURES DETECTED
+        # For LoRA training, this image is NOT suitable
+        # Still process it but it will go to rejections folder
+        # Just do a simple center crop (but it's marked as rejected)
         aspect_ratio = target_width / target_height
         current_ratio = width / height
         
-        # Convert to numpy for analysis
-        img_np = np.array(image)
-        
-        # Calculate the crop dimensions
         if current_ratio > aspect_ratio:
-            # Image is wider, crop width
-            crop_width = int(height * aspect_ratio)
-            crop_height = height
+            # Image is wider, crop width from center
+            new_width = int(height * aspect_ratio)
+            left = (width - new_width) // 2
+            cropped = image.crop((left, 0, left + new_width, height))
         else:
-            # Image is taller, crop height
-            crop_width = width
-            crop_height = int(width / aspect_ratio)
+            # Image is taller, crop height from center
+            new_height = int(width / aspect_ratio)
+            top = (height - new_height) // 2
+            cropped = image.crop((0, top, width, top + new_height))
         
-        # Find the most interesting region using edge detection
-        # This works better for food, scenery, objects
-        gray = cv2.cvtColor(img_np, cv2.COLOR_RGB2GRAY)
-        edges = cv2.Laplacian(gray, cv2.CV_64F)
-        edges = np.abs(edges)
-        
-        # Divide image into overlapping regions and find the one with most detail
-        best_score = -1
-        best_left = 0
-        best_top = 0
-        
-        # Try different crop positions (every 10% of possible range)
-        max_left = max(0, width - crop_width)
-        max_top = max(0, height - crop_height)
-        step_x = max(1, max_left // 10) if max_left > 0 else 1
-        step_y = max(1, max_top // 10) if max_top > 0 else 1
-        
-        for left in range(0, max_left + 1, step_x):
-            for top in range(0, max_top + 1, step_y):
-                # Calculate detail score for this region
-                region = edges[top:top+crop_height, left:left+crop_width]
-                score = np.sum(region)
-                
-                if score > best_score:
-                    best_score = score
-                    best_left = left
-                    best_top = top
-        
-        # Use the region with most detail
-        cropped = image.crop((best_left, best_top, best_left + crop_width, best_top + crop_height))
         if verbose:
-            print(f"  ⚠ No face detected - smart crop to most detailed area")
+            print(f"  ❌ NO FACE OR FACIAL FEATURES - Not suitable for LoRA training")
     
     return cropped, face_data
 
