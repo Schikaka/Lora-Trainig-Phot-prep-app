@@ -29,6 +29,7 @@ import shutil
 from pathlib import Path
 from datetime import datetime
 import argparse
+import random
 
 try:
     from PIL import Image, ImageStat
