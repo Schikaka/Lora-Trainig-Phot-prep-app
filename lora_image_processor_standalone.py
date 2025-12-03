@@ -59,6 +59,73 @@ except Exception as e:
     print("Face detection will be disabled, using center crop only.")
     FACE_CASCADE = None
 
+def detect_facial_features(image_np):
+    """Detect individual facial features (eyes, nose, mouth) when full face detection fails"""
+    gray = cv2.cvtColor(image_np, cv2.COLOR_RGB2GRAY)
+    height, width = gray.shape
+    
+    features_found = []
+    
+    # Try to detect eyes
+    try:
+        eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
+        eyes = eye_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(20, 20))
+        if len(eyes) >= 2:  # Need at least 2 eyes for a valid face region
+            features_found.extend(eyes)
+    except:
+        pass
+    
+    # Try to detect nose
+    try:
+        # Use profile cascade which sometimes works for nose detection
+        nose_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_profileface.xml')
+        noses = nose_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=3, minSize=(30, 30))
+        if len(noses) > 0:
+            features_found.extend(noses)
+    except:
+        pass
+    
+    # Try to detect mouth/smile
+    try:
+        smile_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_smile.xml')
+        mouths = smile_cascade.detectMultiScale(gray, scaleFactor=1.8, minNeighbors=20, minSize=(25, 25))
+        if len(mouths) > 0:
+            features_found.extend(mouths)
+    except:
+        pass
+    
+    if len(features_found) >= 2:  # Need at least 2 features to consider it a face region
+        # Calculate bounding box around all detected features
+        min_x = min([x for x, y, w, h in features_found])
+        min_y = min([y for x, y, w, h in features_found])
+        max_x = max([x + w for x, y, w, h in features_found])
+        max_y = max([y + h for x, y, w, h in features_found])
+        
+        # Create a synthetic face box around the features
+        face_x = min_x
+        face_y = min_y
+        face_w = max_x - min_x
+        face_h = max_y - min_y
+        
+        # Add padding (features are usually in the middle of face)
+        padding = 0.5  # 50% padding around detected features
+        face_x = max(0, int(face_x - face_w * padding))
+        face_y = max(0, int(face_y - face_h * padding))
+        face_w = int(face_w * (1 + padding * 2))
+        face_h = int(face_h * (1 + padding * 2))
+        
+        # Ensure within image bounds
+        face_w = min(face_w, width - face_x)
+        face_h = min(face_h, height - face_y)
+        
+        return {
+            'box': (face_x, face_y, face_w, face_h),
+            'angle': 'frontal',
+            'confidence': 'features_based'
+        }
+    
+    return None
+
 def detect_face(image_np):
     """Detect face in image with multiple attempts and better accuracy"""
     if FACE_CASCADE is None:
