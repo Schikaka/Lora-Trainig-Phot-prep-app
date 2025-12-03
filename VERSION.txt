@@ -1,22 +1,38 @@
 LoRA Image Processor
 Version: 1.4.2
-Release Date: December 2, 2025
+Release Date: December 3, 2025
 
-Bug Fixes in v1.4.2:
-- Fixed: No more duplicate files! Each input photo now creates exactly ONE output file (or two if "both" sizes selected)
-- Fixed: File numbering is now sequential (001, 002, 003) with no gaps
-- Fixed: Output files now correctly go to output/ folder instead of input/ folder
+=== CRITICAL BUG FIXES in v1.4.2 ===
 
-Bug Fixes in v1.4.1:
-- Fixed: Resolution selection prompt now always appears
-- Fixed: Correct prompt order (Keyword first, then Resolution)
-- Added: README files in input/ and output/ folders for clarity
+✅ FIXED: Duplicate files issue
+   - 27 input photos now create exactly 27 output files (not 52 or 76!)
+   - Used set() to eliminate duplicate file paths during extraction
+   - Each photo is processed exactly ONCE
 
-Features:
-- Auto-detects input/input.zip
-- Keyword-based file renaming
-- Face detection and smart cropping
-- Default: ONE file per photo (512x512)
-- Multiple resolution options available
+✅ FIXED: File numbering is sequential
+   - Files now numbered: 001, 002, 003 (no gaps or duplicates)
+   - Counter increments once per input image
+
+✅ FIXED: Output location
+   - All processed files go to output/ folder
+   - No longer creates output in input/ folder
+
+✅ FIXED: Resolution prompts
+   - Keyword prompt appears first
+   - Resolution prompt appears second
+   - Both prompts show correctly in interactive mode
+
+✅ FIXED: Input file detection
+   - Script automatically looks for input/input.zip
+   - Default path works correctly
+
+=== FEATURES ===
+
+• Auto-detects input/input.zip
+• Keyword-based file renaming for LoRA training
+• Face detection with smart cropping
+• Multiple resolution options (512x512, 512x768, 1024x1024)
+• Quality filtering (blur, brightness, contrast)
+• Default: ONE file per photo
 
 License: MIT
