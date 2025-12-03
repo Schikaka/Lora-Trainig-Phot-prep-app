@@ -293,6 +293,24 @@ def process_single_image(image_path, output_dir, filename, verbose=True, skip_qu
         else:
             sizes_to_create = [output_sizes]
         
+        # Check for face detection (do this once before processing sizes)
+        has_face = False
+        test_crop, test_face_data = smart_crop_face(img, 512, 512, verbose=False)
+        if test_face_data:
+            has_face = True
+        
+        # If no face detected and quality check is enabled, mark as rejected
+        if not has_face and not skip_quality_check:
+            if not is_rejected:  # Don't override quality issues
+                is_rejected = True
+                quality_issues.append('no_face_detected')
+                if verbose:
+                    print(f"  ⚠ No face detected")
+                    print(f"  → Will save to rejections folder")
+                # Update output directory
+                if rejections_dir:
+                    actual_output_dir = rejections_dir
+        
         # Process each requested size
         for size_key in sizes_to_create:
             width, height, description = size_configs[size_key]
