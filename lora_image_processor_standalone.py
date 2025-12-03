@@ -373,44 +373,27 @@ def analyze_facial_expression(image, face_data):
 
 def analyze_image_characteristics(image, face_data):
     """
-    Analyze image for LoRA training - FACE-FOCUSED ONLY.
-    Returns detected facial expression and face angle.
+    Comprehensive image analysis for LoRA training - MAXIMUM descriptive detail.
+    Returns primary expression and ALL applicable descriptors.
     """
-    descriptors = []
-    
     if not face_data:
         return ['neutral']
     
-    img_array = np.array(image)
-    face_box = face_data['box']
+    # Get primary expression and additional details
+    primary_expression, detail_descriptors = analyze_facial_expression(image, face_data)
     
-    # 1. FACIAL EXPRESSION (Most important!)
-    expression = analyze_facial_expression(image, face_data)
-    if expression and expression != 'neutral':
-        descriptors.append(expression)
+    # Combine all descriptors
+    all_descriptors = [primary_expression] + detail_descriptors
     
-    # 2. FACE ANGLE
-    angle = face_data.get('angle', 'frontal')
-    if angle == 'profile':
-        descriptors.append('profile')
-    elif angle == 'tilted':
-        descriptors.append('tilted')
+    # Remove duplicates while preserving order
+    seen = set()
+    unique_descriptors = []
+    for desc in all_descriptors:
+        if desc not in seen:
+            seen.add(desc)
+            unique_descriptors.append(desc)
     
-    # 3. FACE FRAMING (closeup vs portrait)
-    face_area = face_box[2] * face_box[3]
-    image_area = img_array.shape[0] * img_array.shape[1]
-    face_percentage = (face_area / image_area) * 100
-    
-    if face_percentage > 30:
-        descriptors.append('closeup')
-    elif face_percentage > 15:
-        descriptors.append('portrait')
-    
-    # 4. Fallback
-    if not descriptors:
-        descriptors.append('neutral')
-    
-    return descriptors
+    return unique_descriptors if unique_descriptors else ['neutral']
 
 def generate_lora_filename(keyword, file_counter, face_data, target_width, target_height, image=None):
     """
