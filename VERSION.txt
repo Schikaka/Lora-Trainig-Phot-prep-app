@@ -2,75 +2,71 @@ LoRA Image Processor
 Version: 1.5.0
 Release Date: December 3, 2025
 
+**PURPOSE: Create perfect face crops for LoRA training ONLY**
+
 === NEW FEATURES in v1.5.0 ===
 
-✅ **Advanced Facial Feature Detection**: Better face recognition!
+✅ **Advanced Facial Feature Detection**: Best possible face detection!
    - Step 1: Tries to detect full face
-   - Step 2: If no full face, looks for individual features (eyes, nose, mouth)
-   - Step 3: If finds 2+ features (e.g., both eyes), crops around them
-   - Step 4: Only if NO facial features at all, uses smart edge detection
-   - "Interesting" = Facial features first, then edge detail
-   - Much better at detecting partial faces, profiles, tilted heads
+   - Step 2: If no full face, looks for individual features (eyes, nose, mouth, ears)
+   - Step 3: If finds 2+ features → Crops around them with generous padding
+   - Step 4: If NO facial features → Image goes to rejections/ (NOT suitable for LoRA training)
+   - 100% focused on FACES for LoRA training
 
-✅ **Smart Cropping (NOT center!)**: Finds the most interesting part
-   - For photos WITHOUT faces: crops to the area with most detail/edges
-   - NO longer always crops to center
-   - Works great for food, scenery, objects when no face detected
-   - Can crop to left, right, top, bottom - wherever the detail is!
-   - Stays within image boundaries
+✅ **LoRA-Optimized Cropping**: Perfect for training AI models
+   - Full face detected → Generous padding (includes hair, shoulders, full head)
+   - Facial features detected → Crops around features with padding
+   - NO face/features → Rejected (not suitable for LoRA)
+   - All crops optimized for face training, NOT general photos
 
-✅ **Improved Face Detection**: Photos without faces go to rejections!
-   - Photos WITH faces OR facial features → output/lora_processed_XXX/
-   - Photos WITHOUT any facial features → rejections/
-   - Blurry/dark photos → rejections/
-   - Review rejections/ and move good ones to main folder if needed
+✅ **Rejections Folder**: Clear separation
+   - Photos WITH faces/features → output/lora_processed_XXX/ ✅ GOOD FOR LORA
+   - Photos WITHOUT faces/features → rejections/ ❌ NOT FOR LORA (food, scenery, objects)
+   - Blurry/dark faces → rejections/ ❌ POOR QUALITY
+   - Review rejections/ - only use if you manually verified face quality
 
-✅ **Rejections Folder**: No files skipped anymore!
-   - ALL images are now processed (even poor quality ones)
-   - Nothing skipped - you decide what to keep
-   - No more missing photos!
-
-✅ **Skip Quality Check Option**: Full control
-   - Use `--skip-quality-check` to process ALL photos to main folder
-   - Or let the filter sort them for you
+✅ **All Photos Processed**: Nothing skipped
+   - ALL 27 photos processed
+   - Good faces → main folder (ready for LoRA training)
+   - Bad/no faces → rejections/ (review manually)
+   - You decide final selection
 
 === CRITICAL BUG FIXES in v1.4.2 ===
 
 ✅ FIXED: Duplicate files issue
-   - 27 input photos now create exactly 27 output files (not 52 or 76!)
-   - Used set() to eliminate duplicate file paths during extraction
-   - Each photo is processed exactly ONCE
+   - 27 input photos → exactly 27 output files (not 52 or 76!)
+   - Used set() to eliminate duplicate file paths
+   - Each photo processed exactly ONCE
 
 ✅ FIXED: File numbering is sequential
-   - Files now numbered: 001, 002, 003 (no gaps or duplicates)
+   - Files numbered: 001, 002, 003 (no gaps)
    - Counter increments once per input image
 
 ✅ FIXED: Output location
-   - All processed files go to output/ folder
-   - No longer creates output in input/ folder
+   - All files go to output/ folder
+   - No longer saves to input/ folder
 
 ✅ FIXED: Resolution prompts
-   - Keyword prompt appears first
-   - Resolution prompt appears second
-   - Both prompts show correctly in interactive mode
+   - Keyword prompt → Resolution prompt (correct order)
+   - Both prompts appear in interactive mode
 
 ✅ FIXED: Input file detection
-   - Script automatically looks for input/input.zip
+   - Automatically looks for input/input.zip
    - Default path works correctly
 
 === FEATURES ===
 
+• 100% FOCUSED ON FACES for LoRA training
 • Auto-detects input/input.zip
-• Keyword-based file renaming for LoRA training
-• Advanced facial feature detection (eyes, nose, mouth)
-• Face detection with generous padding
-• Intelligent cropping for non-face photos (finds most detailed area)
-• Photos without faces automatically go to rejections/
+• Keyword-based file renaming for LoRA
+• Advanced facial feature detection (eyes, nose, mouth, ears)
+• Generous padding around faces (includes hair, head, shoulders)
+• Photos without faces → rejections/ (NOT suitable for LoRA)
 • Multiple resolution options (512x512, 512x768, 1024x1024)
 • Quality filtering (blur: 100, brightness: 30-225, contrast: 30)
-• Rejections folder for low quality/no face photos
-• Default: ONE file per photo
-• All photos processed - none skipped!
-• Use --skip-quality-check to bypass filtering
+• All photos processed - none skipped
+• Use --skip-quality-check to process all to main folder (not recommended)
+
+**This tool is for FACE TRAINING ONLY. Food/scenery photos will be rejected.**
 
 License: MIT
