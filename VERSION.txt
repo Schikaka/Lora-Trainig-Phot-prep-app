@@ -1,55 +1,69 @@
 LoRA Image Processor
-Version: 2.0.0
+Version: 2.1.0
 Release Date: December 3, 2025
 
-**PURPOSE: Extract and crop faces for LoRA training with PROPER NAMING**
+**PURPOSE: Extract and crop faces for LoRA training with INTELLIGENT NAMING**
 
-=== MAJOR FEATURE in v2.0.0 ===
+=== NEW in v2.1.0 ===
 
-✅ **LoRA-Training Naming System**: Industry-standard file naming!
-   - Follows Kohya LoRA training best practices
-   - 40% keyword only (melodija_001.png)
-   - 40% keyword + class word (melodija_girl_002.png, melodija_child_003.png)
-   - 20% keyword + descriptor (melodija_closeup_004.png, melodija_profile_005.png)
-   
-   **Class words**: girl, child, kid
-   **Descriptors**: closeup, portrait, profile, neutral, halfbody
-   
-   **NEVER uses harmful words**: No fantasy, fairy, princess, magical, cinematic, dramatic
-   - Ensures stable, realistic identity learning
-   - Perfect balance for generalization without style bias
+✅ **SMART Descriptor Detection**: Analyzes actual image content!
+   - Detects SMILE/LAUGH using smile cascade classifier
+   - Detects SITTING (horizontal surfaces in lower image)
+   - Detects OUTDOORS vs INDOORS (brightness + color analysis)
+   - Detects CLOSEUP vs HALFBODY vs FULLBODY (face size ratio)
+   - Detects PROFILE from face angle
+   - Only uses descriptors that ACTUALLY match the image!
+
+**Available Descriptors** (auto-detected):
+- smiling (detected via smile classifier)
+- profile (side view face)
+- sitting (horizontal elements detected)
+- closeup (face > 25% of image)
+- halfbody (face 10-25% of image)
+- fullbody (face < 10% of image)
+- outdoors (bright + blue/green tones)
+- indoors (darker or neutral tones)
+- neutral (fallback)
+
+=== NAMING SYSTEM ===
+
+Perfect 40-40-20 distribution:
+- 40% keyword only: melodija_001.png
+- 40% keyword + class: melodija_girl_002.png, melodija_child_003.png
+- 20% keyword + descriptor: melodija_smiling_008.png, melodija_sitting_009.png
+
+**Class words**: girl, child, kid (rotated)
+**Descriptors**: DETECTED FROM ACTUAL IMAGE (not random!)
 
 === EXAMPLE OUTPUT ===
 
-Your 10 photos become:
+Your photos analyzed and named:
 - melodija_001.png (keyword only)
-- melodija_002.png (keyword only)  
+- melodija_002.png (keyword only)
 - melodija_003.png (keyword only)
-- melodija_girl_004.png (keyword + class)
-- melodija_kid_005.png (keyword + class)
-- melodija_girl_006.png (keyword + class)
-- melodija_child_007.png (keyword + class)
-- melodija_closeup_008.png (keyword + descriptor)
-- melodija_neutral_009.png (keyword + descriptor)
+- melodija_girl_004.png (+ class word)
+- melodija_kid_005.png (+ class word)
+- melodija_girl_006.png (+ class word)
+- melodija_child_007.png (+ class word)
+- melodija_smiling_008.png (DETECTED smile!)
+- melodija_sitting_009.png (DETECTED sitting!)
 - melodija_010.png (keyword only)
 
-Perfect 40-40-20 distribution for optimal LoRA training!
+**Descriptors match ACTUAL image content - critical for LoRA training!**
 
 === FEATURES ===
 
-✅ Kohya-compatible naming structure
-✅ Automatic descriptor detection (profile, closeup, portrait)
-✅ Class word rotation (girl, child, kid)
+✅ Intelligent image analysis (emotions, poses, settings)
+✅ Smile detection (only adds "smiling" if smile detected)
+✅ Pose detection (sitting, closeup, fullbody)
+✅ Setting detection (outdoors, indoors)
+✅ Kohya-compatible naming
 ✅ Perfect 40-40-20 distribution
-✅ Sequential 3-digit numbering (001-999)
-✅ Detects faces anywhere in photo
-✅ Crops in to faces (zooms to make large)
-✅ Advanced facial feature detection
-✅ Generous padding (hair, head, shoulders)
-✅ All photos processed - none skipped
-✅ No duplicates
+✅ NO prohibited words (fantasy, fairy, princess, etc.)
+✅ 3-digit numbering (001-999)
+✅ All faces detected and cropped
 
-**100% compatible with Kohya LoRA trainer - produces stable, realistic results!**
+**100% compatible with Kohya LoRA - descriptors match reality!**
 
 License: MIT
 
