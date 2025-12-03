@@ -217,8 +217,14 @@ def smart_crop_face(image, target_width, target_height, verbose=True):
     img_array = np.array(image)
     height, width = img_array.shape[:2]
     
-    # Detect face
+    # Step 1: Try full face detection
     face_data = detect_face(img_array)
+    
+    # Step 2: If no full face, try detecting individual facial features
+    if face_data is None:
+        face_data = detect_facial_features(img_array)
+        if face_data is not None and verbose:
+            print(f"  ✓ Facial features detected (eyes/nose/mouth) - cropping around features")
     
     if face_data is not None:
         face = face_data['box']
