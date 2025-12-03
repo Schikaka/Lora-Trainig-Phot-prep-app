@@ -376,39 +376,20 @@ def process_single_image(image_path, output_dir, filename, verbose=True, skip_qu
         
         # Check for face detection (do this once before processing sizes)
         has_face = False
-        face_is_primary_subject = False
         test_crop, test_face_data = smart_crop_face(img, 512, 512, verbose=False)
         
         if test_face_data:
-            # Face detected - but is it the PRIMARY subject?
-            # Check face size relative to image
-            face_box = test_face_data['box']
-            face_area = face_box[2] * face_box[3]  # width * height
-            image_area = img.size[0] * img.size[1]
-            face_percentage = (face_area / image_area) * 100
-            
-            # Face must be at least 8% of image to be primary subject
-            # This filters out background people in food/scenery photos
-            if face_percentage >= 8.0:
-                has_face = True
-                face_is_primary_subject = True
-            else:
-                has_face = False  # Face too small - probably background person
-                if verbose:
-                    print(f"  ⚠ Face detected but too small ({face_percentage:.1f}% of image)")
-                    print(f"  → Likely background person in food/scenery photo")
+            # Face or facial features detected - crop in on it!
+            # Even if face is small in original, cropping will make it large
+            has_face = True
         
-        # If no face OR face is too small (not primary subject), mark as rejected
-        if not face_is_primary_subject and not skip_quality_check:
+        # If NO face detected at all, mark as rejected
+        if not has_face and not skip_quality_check:
             if not is_rejected:  # Don't override quality issues
                 is_rejected = True
-                if has_face:
-                    quality_issues.append('face_not_primary_subject')
-                else:
-                    quality_issues.append('no_face_detected')
+                quality_issues.append('no_face_detected')
                 if verbose:
-                    if not has_face:
-                        print(f"  ⚠ No face detected")
+                    print(f"  ❌ NO FACE OR FACIAL FEATURES detected")
                     print(f"  → Will save to rejections folder (not suitable for LoRA)")
                 # Update output directory
                 if rejections_dir:
