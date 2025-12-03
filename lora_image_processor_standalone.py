@@ -427,6 +427,11 @@ def process_zip_file(zip_path, output_dir=None, create_zip=True, verbose=True, s
                 else:
                     num_files = len(result.get('files', []))
                     processed_count += num_files
+                    
+                    # Track if file was rejected (poor quality)
+                    if result.get('is_rejected'):
+                        rejected_count += 1
+                    
                     # Increment counter by 1 for each input image (not per output file)
                     if keyword:
                         file_counter += 1
