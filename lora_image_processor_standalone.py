@@ -318,7 +318,7 @@ def process_single_image(image_path, output_dir, filename, verbose=True, skip_qu
                 # Use original format
                 output_filename = f"{base_name}_{width}x{height}.png"
             
-            output_path = output_dir / output_filename
+            output_path = actual_output_dir / output_filename
             cropped.save(output_path, 'PNG', quality=95)
             results.append(output_filename)
             
@@ -328,7 +328,9 @@ def process_single_image(image_path, output_dir, filename, verbose=True, skip_qu
         return {
             'skipped': False,
             'files': results,
-            'face_angle': face_angles[0] if face_angles else 'no_face'
+            'face_angle': face_angles[0] if face_angles else 'no_face',
+            'is_rejected': is_rejected,
+            'quality_issues': quality_issues
         }
     except Exception as e:
         print(f"  ✗ Error processing {filename}: {str(e)}")
