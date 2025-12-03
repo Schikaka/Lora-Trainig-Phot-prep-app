@@ -1,76 +1,109 @@
 LoRA Image Processor  
-Version: 2.2.0
+Version: 3.0.0 - MAXIMUM DESCRIPTIVE POWER
 Release Date: December 3, 2025
 
-**PURPOSE: PERFECT face crops for LoRA with ADVANCED expression detection**
+**🚀 MAJOR UPGRADE - Professional-Grade Expression Detection**
 
-=== MAJOR UPGRADE in v2.2.0 ===
+=== MASSIVE IMPROVEMENTS in v3.0.0 ===
 
-✅ **ADVANCED Facial Expression Detection**: Multiple analysis techniques!
+✅ **COMBINED NAMING**: Class + Descriptor together!
+   - 60% keyword + class + expression: melodija_girl_smiling_001.png
+   - 40% keyword + expression: melodija_laughing_002.png
+   - MAXIMUM information for LoRA training!
 
-**Detected Expressions:**
-- 😄 **smiling** - Smile cascade + mouth region analysis
-- 😆 **laughing** - Big smile + open mouth detection (high variance)
-- 😮 **surprised** - Wide eyes + raised eyebrows analysis  
-- 😐 **serious** - Low facial variance + neutral mouth
-- 🤔 **thinking** - Alias for serious/calm expression
-- 😶 **neutral** - Default/no strong expression
+✅ **EXPANDED Class Words** (7 options, was 3):
+   - girl, child, kid, person, young_girl, toddler, subject
+   - More variety = better generalization
 
-**Detection Methods:**
-1. **Smile Cascade** - Multiple sensitivity levels (lenient + strict)
-2. **Eye Analysis** - Eye aspect ratio for surprise detection
-3. **Mouth Variance** - Detects open mouth (laugh/surprise)
-4. **Face Variance** - Overall facial uniformity (serious vs expressive)
-5. **Multi-Signal Fusion** - Combines signals for accurate classification
+✅ **ADVANCED Expression Detection** (15+ expressions!):
+   
+   **Smiles (4 levels):**
+   - 😆 laughing (big smile + open mouth)
+   - 😄 joyful (strong smile + high variance)
+   - 😊 smiling (clear smile)
+   - 🙂 cheerful (moderate smile)
+   - 😏 subtle_smile (slight smile)
+   - 😸 playful (subtle smile + expressive)
+   
+   **Other Emotions:**
+   - 😮 surprised (wide eyes + high variance)
+   - 🤔 curious (wide eyes, moderate variance)
+   - 😐 serious (low variance, calm)
+   - 💭 pensive (serious + thoughtful signals)
+   - 🧠 thoughtful (low variance, concentrated)
+   - 😶 neutral (default)
+   
+   **Gaze & Eyes:**
+   - 👁️ eye_contact (eyes centered, looking at camera)
+   - 👀 looking_away (eyes to side)
+   - 😳 eyes_wide (surprised look)
+   - 😑 squinting (narrowed eyes)
+   
+   **Mouth States:**
+   - 😁 teeth_visible (big smile with teeth)
+   - 😮 mouth_open (open mouth detected)
+   
+   **Head Position:**
+   - 👤 profile (side view - 90°)
+   - 🔄 head_tilted (angled view)
+   
+   **Framing:**
+   - 🔍 extreme_closeup (face >35%)
+   - 🔍 closeup (face 25-35%)
+   - 📸 portrait (face 15-25%)
+   
+   **Lighting:**
+   - 💡 well_lit (high contrast, clear features)
 
-**Face Angles:**
-- 👤 **profile** - Side view
-- 🔄 **tilted** - Angled view
+=== DETECTION TECHNOLOGY ===
 
-**Face Framing:**
-- 🔍 **closeup** - Face >30% (extreme closeup)
-- 📸 **portrait** - Face 15-30% (standard)
+**Multi-Signal Analysis:**
+1. Smile cascade (3 sensitivity levels: subtle, clear, big)
+2. Eye cascade + aspect ratio analysis
+3. Mouth variance analysis (open vs closed)
+4. Overall face variance (expressive vs calm)
+5. Contrast analysis (lighting quality)
+6. Gaze direction (eye position relative to face center)
 
-=== EXPRESSION PRIORITY ===
-
-Most specific → Most general:
-1. **laughing** (strongest expression)
-2. **smiling** (clear positive emotion)
-3. **surprised** (wide eyes detected)
-4. **serious** (calm, uniform face)
-5. **profile** (angle matters)
-6. **tilted** (angle matters)
-7. **closeup/portrait** (framing)
-8. **neutral** (fallback)
+**Scoring System:**
+- Each signal contributes to expression score
+- Highest scoring expression wins
+- Additional descriptors added for extra detail
 
 === NAMING EXAMPLES ===
 
-Real detection results:
 ```
-melodija_001.png           (keyword only)
-melodija_002.png           (keyword only)
-melodija_003.png           (keyword only)
-melodija_girl_004.png      (+ class: girl)
-melodija_kid_005.png       (+ class: kid)
-melodija_girl_006.png      (+ class: girl)
-melodija_child_007.png     (+ class: child)
-melodija_laughing_008.png  (EXPRESSION detected!)
-melodija_smiling_009.png   (EXPRESSION detected!)
-melodija_010.png           (keyword only)
+melodija_girl_laughing_001.png      ← Class + Expression (60%)
+melodija_smiling_002.png            ← Expression only (40%)
+melodija_child_playful_003.png      ← Class + Expression (60%)
+melodija_profile_004.png            ← Expression only (40%)
+melodija_toddler_joyful_005.png     ← Class + Expression (60%)
+melodija_eye_contact_006.png        ← Expression only (40%)
+melodija_person_curious_007.png     ← Class + Expression (60%)
+melodija_thoughtful_008.png         ← Expression only (40%)
+melodija_young_girl_cheerful_009.png ← Class + Expression (60%)
+melodija_subtle_smile_010.png       ← Expression only (40%)
 ```
 
-Perfect 40-40-20 distribution + ACTUAL detected expressions!
+Perfect 60-40 split with RICH descriptive information!
 
-=== DETECTION ACCURACY ===
+=== ALL FEATURES ===
 
-✅ Smile cascade with lenient + strict parameters
-✅ Eye aspect ratio analysis (wide eyes = surprised)
-✅ Mouth region variance (open mouth = laughing)
-✅ Overall face variance (serious vs expressive)
-✅ Multi-level detection for accuracy
-✅ Only labels expressions that are ACTUALLY detected
+✅ 15+ detectable facial expressions
+✅ 7 class word variations
+✅ Combined naming (class + descriptor)
+✅ Multi-signal expression analysis
+✅ Gaze direction detection
+✅ Head position analysis
+✅ Lighting quality detection
+✅ Smile intensity levels (subtle → big)
+✅ Eye state analysis (wide, squinting, contact)
+✅ Mouth state detection (open, teeth visible)
+✅ 100% face-focused (no irrelevant descriptors)
+✅ No duplicates, sequential numbering
+✅ All faces processed, rejections for no-face
 
-**NO guessing - only real detected facial characteristics!**
+**MAXIMUM descriptive power for professional LoRA training results!**
 
 License: MIT
 
