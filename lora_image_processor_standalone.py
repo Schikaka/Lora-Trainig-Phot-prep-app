@@ -213,10 +213,123 @@ def check_image_quality(image):
         'contrast': contrast
     }
 
+def analyze_facial_expression(image, face_data):
+    """
+    Advanced facial expression analysis for LoRA training.
+    Detects: smiling, laughing, serious, surprised, thinking, neutral.
+    100% focused on FACE characteristics only.
+    """
+    if not face_data:
+        return 'neutral'
+    
+    img_array = np.array(image)
+    gray = cv2.cvtColor(img_array, cv2.COLOR_RGB2GRAY)
+    face_box = face_data['box']
+    face_x, face_y, face_w, face_h = face_box
+    
+    # Extract face region for analysis
+    face_region = gray[face_y:face_y+face_h, face_x:face_x+face_w]
+    if face_region.size == 0:
+        return 'neutral'
+    
+    expression_score = {}
+    
+    # === 1. SMILE / LAUGH DETECTION ===
+    try:
+        smile_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_smile.xml')
+        
+        # Analyze lower 60% of face (mouth region)
+        mouth_region = face_region[int(face_h*0.4):, :]
+        
+        # Multiple smile detection attempts with different sensitivities
+        smile_detections = []
+        
+        # Lenient detection (catches subtle smiles)
+        smiles_lenient = smile_cascade.detectMultiScale(
+            mouth_region, scaleFactor=1.5, minNeighbors=10, minSize=(15, 15)
+        )
+        smile_detections.extend(smiles_lenient)
+        
+        # Strict detection (only clear smiles)
+        smiles_strict = smile_cascade.detectMultiScale(
+            mouth_region, scaleFactor=1.8, minNeighbors=25, minSize=(20, 20)
+        )
+        
+        # Determine smile intensity
+        if len(smiles_strict) > 0:
+            expression_score['laughing'] = len(smiles_strict) * 2  # Strong smile
+        if len(smile_detections) > 0:
+            expression_score['smiling'] = len(smile_detections)
+            
+    except:
+        pass
+    
+    # === 2. EYE ANALYSIS (for surprised/serious) ===
+    try:
+        eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
+        
+        # Analyze upper 60% of face (eye region)
+        eye_region = face_region[:int(face_h*0.6), :]
+        
+        eyes = eye_cascade.detectMultiScale(
+            eye_region, scaleFactor=1.1, minNeighbors=5, minSize=(15, 15)
+        )
+        
+        if len(eyes) >= 2:
+            # Analyze eye characteristics
+            avg_eye_height = np.mean([h for x, y, w, h in eyes])
+            avg_eye_width = np.mean([w for x, y, w, h in eyes])
+            
+            # Wide eyes (height/width ratio > 1.2) suggests surprise
+            eye_aspect = avg_eye_height / avg_eye_width if avg_eye_width > 0 else 0
+            if eye_aspect > 1.2:
+                expression_score['surprised'] = 2
+                
+    except:
+        pass
+    
+    # === 3. MOUTH SHAPE ANALYSIS ===
+    # Analyze contrast/variance in mouth region for open mouth detection
+    try:
+        mouth_y_start = int(face_h * 0.6)
+        mouth_y_end = int(face_h * 0.85)
+        mouth_region = face_region[mouth_y_start:mouth_y_end, :]
+        
+        if mouth_region.size > 0:
+            # Calculate variance (open mouth = more variance due to shadows)
+            mouth_variance = np.var(mouth_region)
+            
+            # High variance = open mouth (could be laughing or surprised)
+            if mouth_variance > 500:  # Threshold for open mouth
+                if 'laughing' not in expression_score:
+                    expression_score['laughing'] = expression_score.get('laughing', 0) + 1
+    except:
+        pass
+    
+    # === 4. OVERALL FACE CONTRAST (serious vs neutral) ===
+    try:
+        # Low variance across face = neutral/calm expression
+        # High variance = more expressive
+        face_variance = np.var(face_region)
+        
+        if face_variance < 300 and not expression_score:
+            # Very uniform face = possibly serious/thinking
+            expression_score['serious'] = 1
+    except:
+        pass
+    
+    # === 5. SELECT BEST EXPRESSION ===
+    if expression_score:
+        # Return expression with highest score
+        best_expression = max(expression_score, key=expression_score.get)
+        return best_expression
+    
+    return 'neutral'
+
 def analyze_image_characteristics(image, face_data):
     """
-    Analyze image to detect FACIAL EXPRESSIONS and FACE ANGLES for LoRA training.
-    ONLY focuses on face-relevant characteristics.
+    Analyze image for LoRA training - FACE-FOCUSED ONLY.
+    Returns detected facial expression and face angle.
     """
     descriptors = []
     
@@ -224,58 +337,31 @@ def analyze_image_characteristics(image, face_data):
         return ['neutral']
     
     img_array = np.array(image)
-    gray = cv2.cvtColor(img_array, cv2.COLOR_RGB2GRAY)
     face_box = face_data['box']
-    face_x, face_y, face_w, face_h = face_box
     
-    # 1. DETECT SMILE/LAUGH (MOST IMPORTANT)
-    try:
-        smile_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_smile.xml')
-        face_region = gray[face_y:face_y+face_h, face_x:face_x+face_w]
-        
-        if face_region.size > 0:
-            # Look for smile in lower half of face (mouth area)
-            lower_face = face_region[int(face_h*0.4):, :]
-            
-            # Try with lenient parameters first (smiling)
-            smiles = smile_cascade.detectMultiScale(
-                lower_face,
-                scaleFactor=1.7,
-                minNeighbors=15,
-                minSize=(15, 15)
-            )
-            
-            if len(smiles) > 0:
-                descriptors.append('smiling')
-                
-                # Check if it's a BIG smile (laughing)
-                # More smile regions = bigger smile
-                if len(smiles) > 2:
-                    descriptors.append('laughing')
-    except:
-        pass
+    # 1. FACIAL EXPRESSION (Most important!)
+    expression = analyze_facial_expression(image, face_data)
+    if expression and expression != 'neutral':
+        descriptors.append(expression)
     
-    # 2. DETECT PROFILE vs FRONTAL (face angle)
+    # 2. FACE ANGLE
     angle = face_data.get('angle', 'frontal')
     if angle == 'profile':
         descriptors.append('profile')
     elif angle == 'tilted':
         descriptors.append('tilted')
-    # Don't add 'frontal' - that's the default/neutral
     
-    # 3. DETECT FACE FRAMING (closeup vs portrait)
-    # This matters for LoRA - closeup faces train differently than portraits
-    face_area = face_w * face_h
+    # 3. FACE FRAMING (closeup vs portrait)
+    face_area = face_box[2] * face_box[3]
     image_area = img_array.shape[0] * img_array.shape[1]
     face_percentage = (face_area / image_area) * 100
     
     if face_percentage > 30:
-        descriptors.append('closeup')  # Very close face shot
+        descriptors.append('closeup')
     elif face_percentage > 15:
-        descriptors.append('portrait')  # Standard portrait framing
-    # Below 15% is probably too far for good LoRA training
+        descriptors.append('portrait')
     
-    # 4. If no specific descriptors, use neutral
+    # 4. Fallback
     if not descriptors:
         descriptors.append('neutral')
     
