@@ -215,60 +215,59 @@ def check_image_quality(image):
 
 def analyze_facial_expression(image, face_data):
     """
-    Advanced facial expression analysis for LoRA training.
-    Detects: smiling, laughing, serious, surprised, thinking, neutral.
-    100% focused on FACE characteristics only.
+    ADVANCED facial expression analysis with MAXIMUM detail for LoRA training.
+    Detects nuanced expressions, gaze direction, head position, and more.
     """
     if not face_data:
-        return 'neutral'
+        return 'neutral', []
     
     img_array = np.array(image)
     gray = cv2.cvtColor(img_array, cv2.COLOR_RGB2GRAY)
     face_box = face_data['box']
     face_x, face_y, face_w, face_h = face_box
     
-    # Extract face region for analysis
+    # Extract face region
     face_region = gray[face_y:face_y+face_h, face_x:face_x+face_w]
     if face_region.size == 0:
-        return 'neutral'
+        return 'neutral', []
     
-    expression_score = {}
+    expression_signals = {}
+    additional_descriptors = []
     
-    # === 1. SMILE / LAUGH DETECTION ===
+    # === 1. ADVANCED SMILE/LAUGH DETECTION ===
     try:
         smile_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_smile.xml')
-        
-        # Analyze lower 60% of face (mouth region)
         mouth_region = face_region[int(face_h*0.4):, :]
         
-        # Multiple smile detection attempts with different sensitivities
-        smile_detections = []
-        
-        # Lenient detection (catches subtle smiles)
-        smiles_lenient = smile_cascade.detectMultiScale(
-            mouth_region, scaleFactor=1.5, minNeighbors=10, minSize=(15, 15)
+        # Multiple detection levels
+        smiles_subtle = smile_cascade.detectMultiScale(
+            mouth_region, scaleFactor=1.4, minNeighbors=8, minSize=(12, 12)
         )
-        smile_detections.extend(smiles_lenient)
-        
-        # Strict detection (only clear smiles)
-        smiles_strict = smile_cascade.detectMultiScale(
-            mouth_region, scaleFactor=1.8, minNeighbors=25, minSize=(20, 20)
+        smiles_clear = smile_cascade.detectMultiScale(
+            mouth_region, scaleFactor=1.7, minNeighbors=15, minSize=(15, 15)
+        )
+        smiles_big = smile_cascade.detectMultiScale(
+            mouth_region, scaleFactor=1.8, minNeighbors=22, minSize=(20, 20)
         )
         
-        # Determine smile intensity
-        if len(smiles_strict) > 0:
-            expression_score['laughing'] = len(smiles_strict) * 2  # Strong smile
-        if len(smile_detections) > 0:
-            expression_score['smiling'] = len(smile_detections)
+        # Classify smile intensity
+        if len(smiles_big) > 0:
+            expression_signals['laughing'] = 10
+            expression_signals['joyful'] = 8
+            additional_descriptors.append('teeth_visible')
+        elif len(smiles_clear) > 0:
+            expression_signals['smiling'] = 8
+            expression_signals['cheerful'] = 6
+        elif len(smiles_subtle) > 0:
+            expression_signals['subtle_smile'] = 5
+            expression_signals['playful'] = 4
             
     except:
         pass
     
-    # === 2. EYE ANALYSIS (for surprised/serious) ===
+    # === 2. EYE ANALYSIS (gaze, surprise, expression) ===
     try:
         eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
-        
-        # Analyze upper 60% of face (eye region)
         eye_region = face_region[:int(face_h*0.6), :]
         
         eyes = eye_cascade.detectMultiScale(
@@ -276,55 +275,101 @@ def analyze_facial_expression(image, face_data):
         )
         
         if len(eyes) >= 2:
-            # Analyze eye characteristics
+            # Sort eyes by x position
+            eyes_sorted = sorted(eyes, key=lambda e: e[0])
+            
+            # Analyze eye size and shape
             avg_eye_height = np.mean([h for x, y, w, h in eyes])
             avg_eye_width = np.mean([w for x, y, w, h in eyes])
-            
-            # Wide eyes (height/width ratio > 1.2) suggests surprise
             eye_aspect = avg_eye_height / avg_eye_width if avg_eye_width > 0 else 0
-            if eye_aspect > 1.2:
-                expression_score['surprised'] = 2
+            
+            # Wide eyes (tall aspect) = surprised or curious
+            if eye_aspect > 1.3:
+                expression_signals['surprised'] = 7
+                expression_signals['curious'] = 5
+                additional_descriptors.append('eyes_wide')
+            elif eye_aspect < 0.7:
+                expression_signals['squinting'] = 4
+            
+            # Check eye position for gaze direction
+            eye_x_positions = [x + w/2 for x, y, w, h in eyes]
+            avg_eye_x = np.mean(eye_x_positions)
+            face_center_x = face_w / 2
+            
+            # Eyes shifted to one side = looking away
+            if abs(avg_eye_x - face_center_x) > face_w * 0.15:
+                additional_descriptors.append('looking_away')
+            else:
+                additional_descriptors.append('eye_contact')
                 
     except:
         pass
     
-    # === 3. MOUTH SHAPE ANALYSIS ===
-    # Analyze contrast/variance in mouth region for open mouth detection
+    # === 3. MOUTH VARIANCE (open mouth, teeth) ===
     try:
-        mouth_y_start = int(face_h * 0.6)
+        mouth_y_start = int(face_h * 0.55)
         mouth_y_end = int(face_h * 0.85)
         mouth_region = face_region[mouth_y_start:mouth_y_end, :]
         
         if mouth_region.size > 0:
-            # Calculate variance (open mouth = more variance due to shadows)
             mouth_variance = np.var(mouth_region)
             
-            # High variance = open mouth (could be laughing or surprised)
-            if mouth_variance > 500:  # Threshold for open mouth
-                if 'laughing' not in expression_score:
-                    expression_score['laughing'] = expression_score.get('laughing', 0) + 1
+            # Very high variance = wide open mouth
+            if mouth_variance > 800:
+                expression_signals['laughing'] = expression_signals.get('laughing', 0) + 5
+                additional_descriptors.append('mouth_open')
+            elif mouth_variance > 500:
+                expression_signals['smiling'] = expression_signals.get('smiling', 0) + 3
     except:
         pass
     
-    # === 4. OVERALL FACE CONTRAST (serious vs neutral) ===
+    # === 4. FACE VARIANCE (serious, calm, expressive) ===
     try:
-        # Low variance across face = neutral/calm expression
-        # High variance = more expressive
         face_variance = np.var(face_region)
+        face_contrast = np.max(face_region) - np.min(face_region)
         
-        if face_variance < 300 and not expression_score:
-            # Very uniform face = possibly serious/thinking
-            expression_score['serious'] = 1
+        # Low variance + low contrast = very calm/serious
+        if face_variance < 250 and face_contrast < 100:
+            if not expression_signals:  # Only if no other expression
+                expression_signals['serious'] = 5
+                expression_signals['pensive'] = 4
+                expression_signals['thoughtful'] = 3
+        
+        # High contrast = well-defined features
+        if face_contrast > 150:
+            additional_descriptors.append('well_lit')
+            
     except:
         pass
     
-    # === 5. SELECT BEST EXPRESSION ===
-    if expression_score:
-        # Return expression with highest score
-        best_expression = max(expression_score, key=expression_score.get)
-        return best_expression
+    # === 5. HEAD POSITION/TILT ===
+    angle = face_data.get('angle', 'frontal')
+    if angle == 'profile':
+        additional_descriptors.append('profile')
+        expression_signals['profile'] = 6
+    elif angle == 'tilted':
+        additional_descriptors.append('head_tilted')
+        expression_signals['tilted'] = 5
     
-    return 'neutral'
+    # === 6. FACE FRAMING ===
+    face_area = face_box[2] * face_box[3]
+    image_area = img_array.shape[0] * img_array.shape[1]
+    face_percentage = (face_area / image_area) * 100
+    
+    if face_percentage > 35:
+        additional_descriptors.append('extreme_closeup')
+    elif face_percentage > 25:
+        additional_descriptors.append('closeup')
+    elif face_percentage > 15:
+        additional_descriptors.append('portrait')
+    
+    # === 7. SELECT PRIMARY EXPRESSION ===
+    if expression_signals:
+        primary_expression = max(expression_signals, key=expression_signals.get)
+    else:
+        primary_expression = 'neutral'
+    
+    return primary_expression, additional_descriptors
 
 def analyze_image_characteristics(image, face_data):
     """
