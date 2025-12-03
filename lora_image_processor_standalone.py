@@ -213,28 +213,105 @@ def check_image_quality(image):
         'contrast': contrast
     }
 
-def generate_lora_filename(keyword, file_counter, face_data, target_width, target_height, total_files):
+def analyze_image_characteristics(image, face_data):
+    """
+    Analyze image to detect emotions, poses, and characteristics.
+    Returns list of applicable descriptors.
+    """
+    descriptors = []
+    
+    if not face_data:
+        return ['neutral']
+    
+    img_array = np.array(image)
+    gray = cv2.cvtColor(img_array, cv2.COLOR_RGB2GRAY)
+    
+    # 1. Detect SMILE/LAUGH
+    try:
+        smile_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_smile.xml')
+        face_box = face_data['box']
+        face_x, face_y, face_w, face_h = face_box
+        
+        # Look for smile in lower half of face
+        face_region = gray[face_y:face_y+face_h, face_x:face_x+face_w]
+        if face_region.size > 0:
+            lower_face = face_region[int(face_h*0.5):, :]  # Bottom half of face
+            smiles = smile_cascade.detectMultiScale(
+                lower_face,
+                scaleFactor=1.8,
+                minNeighbors=20,
+                minSize=(15, 15)
+            )
+            if len(smiles) > 0:
+                descriptors.append('smiling')
+    except:
+        pass
+    
+    # 2. Detect SITTING (look for horizontal elements in lower portion)
+    # Check for horizontal edges in bottom third of image
+    height, width = img_array.shape[:2]
+    bottom_third = gray[int(height * 0.66):, :]
+    if bottom_third.size > 0:
+        edges = cv2.Canny(bottom_third, 50, 150)
+        horizontal_lines = cv2.HoughLinesP(
+            edges, 1, np.pi/180, 50,
+            minLineLength=width*0.3,
+            maxLineGap=10
+        )
+        if horizontal_lines is not None and len(horizontal_lines) > 3:
+            descriptors.append('sitting')
+    
+    # 3. Detect OUTDOORS vs INDOORS (brightness and color analysis)
+    brightness = np.mean(img_array)
+    if brightness > 140:  # Bright image
+        # Check for blue/green tones (sky/grass)
+        blue_channel = np.mean(img_array[:, :, 2])
+        green_channel = np.mean(img_array[:, :, 1])
+        if blue_channel > 100 or green_channel > 100:
+            descriptors.append('outdoors')
+        else:
+            descriptors.append('indoors')
+    elif brightness < 100:
+        descriptors.append('indoors')  # Dark = likely indoors
+    
+    # 4. Detect FULLBODY vs HALFBODY vs CLOSEUP
+    # Based on face size relative to image
+    face_box = face_data['box']
+    face_area = face_box[2] * face_box[3]
+    image_area = img_array.shape[0] * img_array.shape[1]
+    face_percentage = (face_area / image_area) * 100
+    
+    if face_percentage > 25:
+        descriptors.append('closeup')
+    elif face_percentage > 10:
+        descriptors.append('halfbody')
+    elif face_percentage < 10:
+        descriptors.append('fullbody')
+    
+    # 5. Detect PROFILE (from face data)
+    angle = face_data.get('angle', 'frontal')
+    if angle == 'profile':
+        descriptors.append('profile')
+    
+    # 6. If no specific descriptors found, use neutral
+    if not descriptors:
+        descriptors.append('neutral')
+    
+    return descriptors
+
+def generate_lora_filename(keyword, file_counter, face_data, target_width, target_height, image=None):
     """
     Generate LoRA-training compatible filename with proper naming structure.
     
     Distribution:
     - 40% keyword only (melodija_001.png)
     - 40% keyword + class word (melodija_girl_002.png)
-    - 20% keyword + descriptor (melodija_closeup_003.png)
+    - 20% keyword + descriptor (melodija_smiling_003.png)
     """
     # Class words (safe for LoRA training)
     class_words = ['girl', 'child', 'kid']
     
-    # Neutral descriptors based on image analysis
-    descriptors = {
-        'portrait': ['portrait', 'closeup'],  # Close-up face shots
-        'profile': ['profile'],  # Side view
-        'neutral': ['neutral', 'halfbody'],  # Default options
-        'smiling': ['smiling'],  # Only if detectable (we'll use neutral instead for safety)
-    }
-    
     # Determine naming pattern based on distribution (40/40/20)
-    # Use file_counter to ensure consistent distribution
     pattern_choice = file_counter % 10  # 0-9
     
     if pattern_choice < 4:  # 0-3 = 40%
@@ -247,14 +324,37 @@ def generate_lora_filename(keyword, file_counter, face_data, target_width, targe
         filename = f"{keyword}_{class_word}_{file_counter:03d}.png"
     
     else:  # 8-9 = 20%
-        # Pattern C: keyword + descriptor (based on actual image)
-        descriptor = determine_descriptor(face_data, target_width, target_height)
+        # Pattern C: keyword + descriptor (analyzed from actual image)
+        if image:
+            detected_descriptors = analyze_image_characteristics(image, face_data)
+            # Pick the most specific descriptor
+            if 'smiling' in detected_descriptors:
+                descriptor = 'smiling'
+            elif 'profile' in detected_descriptors:
+                descriptor = 'profile'
+            elif 'sitting' in detected_descriptors:
+                descriptor = 'sitting'
+            elif 'closeup' in detected_descriptors:
+                descriptor = 'closeup'
+            elif 'halfbody' in detected_descriptors:
+                descriptor = 'halfbody'
+            elif 'fullbody' in detected_descriptors:
+                descriptor = 'fullbody'
+            elif 'outdoors' in detected_descriptors:
+                descriptor = 'outdoors'
+            elif 'indoors' in detected_descriptors:
+                descriptor = 'indoors'
+            else:
+                descriptor = detected_descriptors[0] if detected_descriptors else 'neutral'
+        else:
+            descriptor = determine_descriptor(face_data, target_width, target_height)
+        
         filename = f"{keyword}_{descriptor}_{file_counter:03d}.png"
     
     return filename
 
 def determine_descriptor(face_data, target_width, target_height):
-    """Determine appropriate descriptor based on image/face analysis"""
+    """Fallback descriptor determination (simplified version)"""
     if not face_data:
         return 'neutral'
     
@@ -265,11 +365,10 @@ def determine_descriptor(face_data, target_width, target_height):
     
     # Check if it's a portrait or closeup based on aspect ratio
     if target_height > target_width:
-        return 'portrait'  # 512x768 is portrait
+        return 'portrait'
     else:
-        return 'closeup'  # 512x512 is closeup
+        return 'closeup'
     
-    # Default fallback
     return 'neutral'
 
 def smart_crop_face(image, target_width, target_height, verbose=True):
