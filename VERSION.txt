@@ -1,69 +1,73 @@
 LoRA Image Processor
-Version: 2.1.0
+Version: 2.1.1
 Release Date: December 3, 2025
 
-**PURPOSE: Extract and crop faces for LoRA training with INTELLIGENT NAMING**
+**PURPOSE: Face LoRA training with FACIAL-FOCUSED naming**
 
-=== NEW in v2.1.0 ===
+=== FOCUSED in v2.1.1 ===
 
-✅ **SMART Descriptor Detection**: Analyzes actual image content!
-   - Detects SMILE/LAUGH using smile cascade classifier
-   - Detects SITTING (horizontal surfaces in lower image)
-   - Detects OUTDOORS vs INDOORS (brightness + color analysis)
-   - Detects CLOSEUP vs HALFBODY vs FULLBODY (face size ratio)
-   - Detects PROFILE from face angle
-   - Only uses descriptors that ACTUALLY match the image!
+✅ **ONLY Facial Characteristics**: Removed distractions!
+   - REMOVED: outdoors, indoors, sitting, fullbody, halfbody
+   - FOCUS: Facial expressions and face angles ONLY
+   - For LoRA face training, only face matters!
 
-**Available Descriptors** (auto-detected):
-- smiling (detected via smile classifier)
-- profile (side view face)
-- sitting (horizontal elements detected)
-- closeup (face > 25% of image)
-- halfbody (face 10-25% of image)
-- fullbody (face < 10% of image)
-- outdoors (bright + blue/green tones)
-- indoors (darker or neutral tones)
-- neutral (fallback)
+**Detected Descriptors** (FACE-ONLY):
 
-=== NAMING SYSTEM ===
+**Facial Expressions:**
+- 😄 smiling (smile cascade detection)
+- 😆 laughing (big smile detection)
+- 😐 neutral (default)
 
-Perfect 40-40-20 distribution:
-- 40% keyword only: melodija_001.png
-- 40% keyword + class: melodija_girl_002.png, melodija_child_003.png
-- 20% keyword + descriptor: melodija_smiling_008.png, melodija_sitting_009.png
+**Face Angles:**
+- 👤 profile (side view)
+- 🔄 tilted (angled view)
+- (frontal is default - not labeled)
 
-**Class words**: girl, child, kid (rotated)
-**Descriptors**: DETECTED FROM ACTUAL IMAGE (not random!)
+**Face Framing:**
+- 🔍 closeup (face >30% of image - very close)
+- 📸 portrait (face 15-30% - standard portrait)
 
-=== EXAMPLE OUTPUT ===
+=== PRIORITY SYSTEM ===
 
-Your photos analyzed and named:
-- melodija_001.png (keyword only)
-- melodija_002.png (keyword only)
-- melodija_003.png (keyword only)
-- melodija_girl_004.png (+ class word)
-- melodija_kid_005.png (+ class word)
-- melodija_girl_006.png (+ class word)
-- melodija_child_007.png (+ class word)
-- melodija_smiling_008.png (DETECTED smile!)
-- melodija_sitting_009.png (DETECTED sitting!)
-- melodija_010.png (keyword only)
+Picks most relevant facial characteristic:
+1. **laughing** (biggest smile)
+2. **smiling** (smile detected)
+3. **profile** (side view face)
+4. **tilted** (angled face)
+5. **closeup** (very close face)
+6. **portrait** (standard framing)
+7. **neutral** (fallback)
 
-**Descriptors match ACTUAL image content - critical for LoRA training!**
+=== NAMING EXAMPLES ===
+
+Your 10 photos:
+```
+melodija_001.png          (keyword only - 40%)
+melodija_002.png          (keyword only - 40%)
+melodija_003.png          (keyword only - 40%)
+melodija_girl_004.png     (+ class word - 40%)
+melodija_kid_005.png      (+ class word - 40%)
+melodija_girl_006.png     (+ class word - 40%)
+melodija_child_007.png    (+ class word - 40%)
+melodija_smiling_008.png  (SMILE detected! - 20%)
+melodija_profile_009.png  (SIDE VIEW detected! - 20%)
+melodija_010.png          (keyword only - 40%)
+```
+
+**Perfect 40-40-20 distribution with FACE-ONLY descriptors!**
 
 === FEATURES ===
 
-✅ Intelligent image analysis (emotions, poses, settings)
-✅ Smile detection (only adds "smiling" if smile detected)
-✅ Pose detection (sitting, closeup, fullbody)
-✅ Setting detection (outdoors, indoors)
+✅ Facial expression detection (smiling, laughing)
+✅ Face angle detection (profile, tilted)
+✅ Face framing detection (closeup, portrait)
+✅ NO irrelevant descriptors (outdoors, sitting, etc.)
+✅ 100% focused on face characteristics
 ✅ Kohya-compatible naming
 ✅ Perfect 40-40-20 distribution
-✅ NO prohibited words (fantasy, fairy, princess, etc.)
-✅ 3-digit numbering (001-999)
-✅ All faces detected and cropped
+✅ 3-digit numbering
 
-**100% compatible with Kohya LoRA - descriptors match reality!**
+**Laser-focused on FACE training - nothing else matters!**
 
 License: MIT
 
