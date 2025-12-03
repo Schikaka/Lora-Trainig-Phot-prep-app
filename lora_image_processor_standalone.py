@@ -405,6 +405,7 @@ def process_zip_file(zip_path, output_dir=None, create_zip=True, verbose=True, s
         
         # Process each image and collect statistics
         processed_count = 0
+        rejected_count = 0
         skipped_count = 0
         face_angles = []
         skipped_reasons = []
@@ -415,9 +416,9 @@ def process_zip_file(zip_path, output_dir=None, create_zip=True, verbose=True, s
             if verbose:
                 print(f"\n[{i}/{len(image_files)}]")
             
-            # Pass counter only if using keyword naming
+            # Pass counter and rejections_dir
             counter = file_counter if keyword else None
-            result = process_single_image(img_path, output_dir, img_path.name, verbose, skip_quality_check, output_sizes, counter, keyword)
+            result = process_single_image(img_path, output_dir, img_path.name, verbose, skip_quality_check, output_sizes, counter, keyword, rejections_dir)
             
             if isinstance(result, dict):
                 if result.get('skipped'):
