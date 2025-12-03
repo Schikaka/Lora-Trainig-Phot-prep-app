@@ -570,14 +570,14 @@ def process_single_image(image_path, output_dir, filename, verbose=True, skip_qu
             
             # Generate filename with LoRA-training compatible naming
             if keyword and file_counter is not None:
-                # Use LoRA naming system for proper training
+                # Use LoRA naming system with image analysis for descriptors
                 output_filename = generate_lora_filename(
                     keyword, 
                     file_counter, 
                     face_data, 
                     width, 
                     height,
-                    total_files=1  # Will be updated by caller if needed
+                    image=img  # Pass original image for analysis
                 )
                 
                 # If multiple sizes, add size suffix to avoid overwriting
