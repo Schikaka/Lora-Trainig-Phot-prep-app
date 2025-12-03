@@ -1,30 +1,33 @@
 LoRA Image Processor
-Version: 1.5.1
+Version: 1.5.2
 Release Date: December 3, 2025
 
-**PURPOSE: Create perfect face crops for LoRA training ONLY**
+**PURPOSE: Extract and crop faces from ANY photo for LoRA training**
 
-=== CRITICAL FIX in v1.5.1 ===
+=== FIX in v1.5.2 ===
 
-✅ **Face Must Be PRIMARY Subject**: No more background people!
-   - Face must be at least 8% of image area to qualify
-   - Filters out food photos with person in background (e.g., Mel_013)
-   - Filters out scenery photos with distant people
-   - Only photos where FACE is the MAIN SUBJECT go to output folder
-   - Small/background faces → rejections/ (not suitable for LoRA training)
+✅ **Crops In To ANY Detected Face**: No size restrictions!
+   - If face detected ANYWHERE (even small) → Crops in close to face
+   - Background person in food photo → Crops to person's face (zooms in)
+   - Distant person in scenery → Crops to person's face (zooms in)
+   - Small face becomes LARGE face in output (perfect for LoRA)
+   - Only rejects if NO face detected at all
 
-Example: Food plate photo with person visible → REJECTED (face not primary subject)
+Example: Food photo with person in background → Crops IN to person, creates good face crop!
 
-=== FEATURES from v1.5.0 ===
+=== FEATURES ===
 
+✅ Detects faces anywhere in photo (even background/small faces)
+✅ Crops IN to detected face (zooms to make it large)
 ✅ Advanced facial feature detection (eyes, nose, mouth, ears)
-✅ Generous padding around faces (hair, head, shoulders)
-✅ Photos without faces → rejections/
-✅ All photos processed - none skipped
+✅ Generous padding around faces (includes hair, head, shoulders)
+✅ Only rejects if NO face/features detected at all
+✅ All photos with faces processed - none skipped
 ✅ Sequential numbering (001, 002, 003...)
 ✅ No duplicates
+✅ Rejections folder for truly no-face photos (pure food, scenery, objects)
 
-**For LoRA training: Face must be the PRIMARY SUBJECT, not just visible somewhere in photo!**
+**If there's a face ANYWHERE in the photo, this tool will find it and crop to it!**
 
 License: MIT
 
