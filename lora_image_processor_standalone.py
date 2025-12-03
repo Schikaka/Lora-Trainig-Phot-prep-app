@@ -369,30 +369,28 @@ def analyze_image_characteristics(image, face_data):
 
 def generate_lora_filename(keyword, file_counter, face_data, target_width, target_height, image=None):
     """
-    Generate LoRA-training compatible filename focused on FACIAL characteristics.
+    Generate LoRA-training compatible filename - NO keyword-only files!
     
-    Distribution:
-    - 40% keyword only (melodija_001.png)
-    - 40% keyword + class word (melodija_girl_002.png)
-    - 20% keyword + facial descriptor (melodija_smiling_003.png)
+    NEW Distribution:
+    - 50% keyword + class word (melodija_girl_002.png)
+    - 50% keyword + facial descriptor (melodija_smiling_003.png)
+    
+    Every file has context for better LoRA training!
     """
     # Class words (safe for LoRA training)
     class_words = ['girl', 'child', 'kid']
     
-    # Determine naming pattern based on distribution (40/40/20)
-    pattern_choice = file_counter % 10  # 0-9
+    # Determine naming pattern - alternating between class and descriptor
+    # Even numbers (0,2,4,6,8) = class word (50%)
+    # Odd numbers (1,3,5,7,9) = descriptor (50%)
     
-    if pattern_choice < 4:  # 0-3 = 40%
-        # Pattern A: keyword only
-        filename = f"{keyword}_{file_counter:03d}.png"
-    
-    elif pattern_choice < 8:  # 4-7 = 40%
-        # Pattern B: keyword + class word
-        class_word = class_words[file_counter % len(class_words)]
+    if file_counter % 2 == 1:  # Odd = 50%
+        # Pattern A: keyword + class word
+        class_word = class_words[(file_counter // 2) % len(class_words)]
         filename = f"{keyword}_{class_word}_{file_counter:03d}.png"
     
-    else:  # 8-9 = 20%
-        # Pattern C: keyword + FACIAL descriptor (detected from actual image analysis)
+    else:  # Even = 50%
+        # Pattern B: keyword + FACIAL descriptor (detected from actual image analysis)
         if image and face_data:
             detected_descriptors = analyze_image_characteristics(image, face_data)
             
