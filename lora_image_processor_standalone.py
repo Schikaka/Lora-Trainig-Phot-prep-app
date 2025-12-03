@@ -215,8 +215,8 @@ def check_image_quality(image):
 
 def analyze_image_characteristics(image, face_data):
     """
-    Analyze image to detect emotions, poses, and characteristics.
-    Returns list of applicable descriptors.
+    Analyze image to detect FACIAL EXPRESSIONS and FACE ANGLES for LoRA training.
+    ONLY focuses on face-relevant characteristics.
     """
     descriptors = []
     
@@ -225,75 +225,57 @@ def analyze_image_characteristics(image, face_data):
     
     img_array = np.array(image)
     gray = cv2.cvtColor(img_array, cv2.COLOR_RGB2GRAY)
+    face_box = face_data['box']
+    face_x, face_y, face_w, face_h = face_box
     
-    # 1. Detect SMILE/LAUGH
+    # 1. DETECT SMILE/LAUGH (MOST IMPORTANT)
     try:
         smile_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_smile.xml')
-        face_box = face_data['box']
-        face_x, face_y, face_w, face_h = face_box
-        
-        # Look for smile in lower half of face
         face_region = gray[face_y:face_y+face_h, face_x:face_x+face_w]
+        
         if face_region.size > 0:
-            lower_face = face_region[int(face_h*0.5):, :]  # Bottom half of face
+            # Look for smile in lower half of face (mouth area)
+            lower_face = face_region[int(face_h*0.4):, :]
+            
+            # Try with lenient parameters first (smiling)
             smiles = smile_cascade.detectMultiScale(
                 lower_face,
-                scaleFactor=1.8,
-                minNeighbors=20,
+                scaleFactor=1.7,
+                minNeighbors=15,
                 minSize=(15, 15)
             )
+            
             if len(smiles) > 0:
                 descriptors.append('smiling')
+                
+                # Check if it's a BIG smile (laughing)
+                # More smile regions = bigger smile
+                if len(smiles) > 2:
+                    descriptors.append('laughing')
     except:
         pass
     
-    # 2. Detect SITTING (look for horizontal elements in lower portion)
-    # Check for horizontal edges in bottom third of image
-    height, width = img_array.shape[:2]
-    bottom_third = gray[int(height * 0.66):, :]
-    if bottom_third.size > 0:
-        edges = cv2.Canny(bottom_third, 50, 150)
-        horizontal_lines = cv2.HoughLinesP(
-            edges, 1, np.pi/180, 50,
-            minLineLength=width*0.3,
-            maxLineGap=10
-        )
-        if horizontal_lines is not None and len(horizontal_lines) > 3:
-            descriptors.append('sitting')
-    
-    # 3. Detect OUTDOORS vs INDOORS (brightness and color analysis)
-    brightness = np.mean(img_array)
-    if brightness > 140:  # Bright image
-        # Check for blue/green tones (sky/grass)
-        blue_channel = np.mean(img_array[:, :, 2])
-        green_channel = np.mean(img_array[:, :, 1])
-        if blue_channel > 100 or green_channel > 100:
-            descriptors.append('outdoors')
-        else:
-            descriptors.append('indoors')
-    elif brightness < 100:
-        descriptors.append('indoors')  # Dark = likely indoors
-    
-    # 4. Detect FULLBODY vs HALFBODY vs CLOSEUP
-    # Based on face size relative to image
-    face_box = face_data['box']
-    face_area = face_box[2] * face_box[3]
-    image_area = img_array.shape[0] * img_array.shape[1]
-    face_percentage = (face_area / image_area) * 100
-    
-    if face_percentage > 25:
-        descriptors.append('closeup')
-    elif face_percentage > 10:
-        descriptors.append('halfbody')
-    elif face_percentage < 10:
-        descriptors.append('fullbody')
-    
-    # 5. Detect PROFILE (from face data)
+    # 2. DETECT PROFILE vs FRONTAL (face angle)
     angle = face_data.get('angle', 'frontal')
     if angle == 'profile':
         descriptors.append('profile')
+    elif angle == 'tilted':
+        descriptors.append('tilted')
+    # Don't add 'frontal' - that's the default/neutral
     
-    # 6. If no specific descriptors found, use neutral
+    # 3. DETECT FACE FRAMING (closeup vs portrait)
+    # This matters for LoRA - closeup faces train differently than portraits
+    face_area = face_w * face_h
+    image_area = img_array.shape[0] * img_array.shape[1]
+    face_percentage = (face_area / image_area) * 100
+    
+    if face_percentage > 30:
+        descriptors.append('closeup')  # Very close face shot
+    elif face_percentage > 15:
+        descriptors.append('portrait')  # Standard portrait framing
+    # Below 15% is probably too far for good LoRA training
+    
+    # 4. If no specific descriptors, use neutral
     if not descriptors:
         descriptors.append('neutral')
     
@@ -301,12 +283,12 @@ def analyze_image_characteristics(image, face_data):
 
 def generate_lora_filename(keyword, file_counter, face_data, target_width, target_height, image=None):
     """
-    Generate LoRA-training compatible filename with proper naming structure.
+    Generate LoRA-training compatible filename focused on FACIAL characteristics.
     
     Distribution:
     - 40% keyword only (melodija_001.png)
     - 40% keyword + class word (melodija_girl_002.png)
-    - 20% keyword + descriptor (melodija_smiling_003.png)
+    - 20% keyword + facial descriptor (melodija_smiling_003.png)
     """
     # Class words (safe for LoRA training)
     class_words = ['girl', 'child', 'kid']
@@ -324,30 +306,27 @@ def generate_lora_filename(keyword, file_counter, face_data, target_width, targe
         filename = f"{keyword}_{class_word}_{file_counter:03d}.png"
     
     else:  # 8-9 = 20%
-        # Pattern C: keyword + descriptor (analyzed from actual image)
-        if image:
+        # Pattern C: keyword + FACIAL descriptor (analyzed from actual face)
+        if image and face_data:
             detected_descriptors = analyze_image_characteristics(image, face_data)
-            # Pick the most specific descriptor
-            if 'smiling' in detected_descriptors:
+            
+            # Priority: Most specific facial characteristics first
+            if 'laughing' in detected_descriptors:
+                descriptor = 'laughing'
+            elif 'smiling' in detected_descriptors:
                 descriptor = 'smiling'
             elif 'profile' in detected_descriptors:
                 descriptor = 'profile'
-            elif 'sitting' in detected_descriptors:
-                descriptor = 'sitting'
+            elif 'tilted' in detected_descriptors:
+                descriptor = 'tilted'
             elif 'closeup' in detected_descriptors:
                 descriptor = 'closeup'
-            elif 'halfbody' in detected_descriptors:
-                descriptor = 'halfbody'
-            elif 'fullbody' in detected_descriptors:
-                descriptor = 'fullbody'
-            elif 'outdoors' in detected_descriptors:
-                descriptor = 'outdoors'
-            elif 'indoors' in detected_descriptors:
-                descriptor = 'indoors'
+            elif 'portrait' in detected_descriptors:
+                descriptor = 'portrait'
             else:
-                descriptor = detected_descriptors[0] if detected_descriptors else 'neutral'
+                descriptor = 'neutral'
         else:
-            descriptor = determine_descriptor(face_data, target_width, target_height)
+            descriptor = 'neutral'
         
         filename = f"{keyword}_{descriptor}_{file_counter:03d}.png"
     
