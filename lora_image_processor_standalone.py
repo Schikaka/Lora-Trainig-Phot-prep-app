@@ -247,7 +247,7 @@ def upscale_image(image, target_width, target_height):
     """Upscale image to target size using Lanczos resampling"""
     return image.resize((target_width, target_height), Image.Resampling.LANCZOS)
 
-def process_single_image(image_path, output_dir, filename, verbose=True, skip_quality_check=False, output_sizes='both', file_counter=None, keyword=None):
+def process_single_image(image_path, output_dir, filename, verbose=True, skip_quality_check=False, output_sizes='both', file_counter=None, keyword=None, rejections_dir=None):
     """Process a single image with specified output sizes"""
     try:
         if verbose:
@@ -258,14 +258,23 @@ def process_single_image(image_path, output_dir, filename, verbose=True, skip_qu
         if verbose:
             print(f"  Original size: {img.size[0]}x{img.size[1]}")
         
-        # Quality check
+        # Quality check - but don't skip, just redirect to rejections folder
+        quality_issues = []
+        is_rejected = False
         if not skip_quality_check:
             quality = check_image_quality(img)
             if not quality['passed']:
+                is_rejected = True
+                quality_issues = quality['issues']
                 if verbose:
                     print(f"  ⚠ Quality issues: {', '.join(quality['issues'])}")
-                    print(f"  ✗ Skipped (poor quality)")
-                return {'skipped': True, 'reason': quality['issues'], 'quality': quality}
+                    print(f"  → Will save to rejections folder")
+        
+        # Use rejections directory if image has quality issues
+        if is_rejected and rejections_dir:
+            actual_output_dir = rejections_dir
+        else:
+            actual_output_dir = output_dir
         
         results = []
         face_angles = []
