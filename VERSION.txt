@@ -1,17 +1,32 @@
 LoRA Image Processor
-Version: 1.5.0
+Version: 1.5.1
 Release Date: December 3, 2025
 
 **PURPOSE: Create perfect face crops for LoRA training ONLY**
 
-=== NEW FEATURES in v1.5.0 ===
+=== CRITICAL FIX in v1.5.1 ===
 
-✅ **Advanced Facial Feature Detection**: Best possible face detection!
-   - Step 1: Tries to detect full face
-   - Step 2: If no full face, looks for individual features (eyes, nose, mouth, ears)
-   - Step 3: If finds 2+ features → Crops around them with generous padding
-   - Step 4: If NO facial features → Image goes to rejections/ (NOT suitable for LoRA training)
-   - 100% focused on FACES for LoRA training
+✅ **Face Must Be PRIMARY Subject**: No more background people!
+   - Face must be at least 8% of image area to qualify
+   - Filters out food photos with person in background (e.g., Mel_013)
+   - Filters out scenery photos with distant people
+   - Only photos where FACE is the MAIN SUBJECT go to output folder
+   - Small/background faces → rejections/ (not suitable for LoRA training)
+
+Example: Food plate photo with person visible → REJECTED (face not primary subject)
+
+=== FEATURES from v1.5.0 ===
+
+✅ Advanced facial feature detection (eyes, nose, mouth, ears)
+✅ Generous padding around faces (hair, head, shoulders)
+✅ Photos without faces → rejections/
+✅ All photos processed - none skipped
+✅ Sequential numbering (001, 002, 003...)
+✅ No duplicates
+
+**For LoRA training: Face must be the PRIMARY SUBJECT, not just visible somewhere in photo!**
+
+License: MIT
 
 ✅ **LoRA-Optimized Cropping**: Perfect for training AI models
    - Full face detected → Generous padding (includes hair, shoulders, full head)
