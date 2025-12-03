@@ -300,8 +300,11 @@ def process_single_image(image_path, output_dir, filename, verbose=True, skip_qu
             
             # Generate filename with keyword if provided
             if keyword and file_counter is not None:
-                # Use keyword_number format - counter is managed by caller
-                output_filename = f"{keyword}_{file_counter:03d}.png"
+                # When creating multiple sizes, add size suffix to avoid overwriting
+                if len(sizes_to_create) > 1:
+                    output_filename = f"{keyword}_{file_counter:03d}_{width}x{height}.png"
+                else:
+                    output_filename = f"{keyword}_{file_counter:03d}.png"
             else:
                 # Use original format
                 output_filename = f"{base_name}_{width}x{height}.png"
