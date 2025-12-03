@@ -367,12 +367,18 @@ def process_zip_file(zip_path, output_dir=None, create_zip=True, verbose=True, s
         if verbose:
             print(f"✓ Extraction complete")
         
-        # Find all image files
+        # Find all image files (avoid duplicates by using a set)
         image_extensions = {'.jpg', '.jpeg', '.png', '.bmp', '.webp'}
-        image_files = []
+        image_files_set = set()
         for ext in image_extensions:
-            image_files.extend(temp_dir.rglob(f'*{ext}'))
-            image_files.extend(temp_dir.rglob(f'*{ext.upper()}'))
+            # Check both lowercase and uppercase extensions
+            for file in temp_dir.rglob(f'*{ext}'):
+                image_files_set.add(file)
+            for file in temp_dir.rglob(f'*{ext.upper()}'):
+                image_files_set.add(file)
+        
+        # Convert set back to list and remove any duplicates
+        image_files = sorted(list(image_files_set))
         
         if not image_files:
             print(f"\n❌ No image files found in ZIP!")
