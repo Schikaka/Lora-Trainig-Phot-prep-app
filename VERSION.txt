@@ -1,33 +1,55 @@
 LoRA Image Processor
-Version: 1.5.2
+Version: 2.0.0
 Release Date: December 3, 2025
 
-**PURPOSE: Extract and crop faces from ANY photo for LoRA training**
+**PURPOSE: Extract and crop faces for LoRA training with PROPER NAMING**
 
-=== FIX in v1.5.2 ===
+=== MAJOR FEATURE in v2.0.0 ===
 
-✅ **Crops In To ANY Detected Face**: No size restrictions!
-   - If face detected ANYWHERE (even small) → Crops in close to face
-   - Background person in food photo → Crops to person's face (zooms in)
-   - Distant person in scenery → Crops to person's face (zooms in)
-   - Small face becomes LARGE face in output (perfect for LoRA)
-   - Only rejects if NO face detected at all
+✅ **LoRA-Training Naming System**: Industry-standard file naming!
+   - Follows Kohya LoRA training best practices
+   - 40% keyword only (melodija_001.png)
+   - 40% keyword + class word (melodija_girl_002.png, melodija_child_003.png)
+   - 20% keyword + descriptor (melodija_closeup_004.png, melodija_profile_005.png)
+   
+   **Class words**: girl, child, kid
+   **Descriptors**: closeup, portrait, profile, neutral, halfbody
+   
+   **NEVER uses harmful words**: No fantasy, fairy, princess, magical, cinematic, dramatic
+   - Ensures stable, realistic identity learning
+   - Perfect balance for generalization without style bias
 
-Example: Food photo with person in background → Crops IN to person, creates good face crop!
+=== EXAMPLE OUTPUT ===
+
+Your 10 photos become:
+- melodija_001.png (keyword only)
+- melodija_002.png (keyword only)  
+- melodija_003.png (keyword only)
+- melodija_girl_004.png (keyword + class)
+- melodija_kid_005.png (keyword + class)
+- melodija_girl_006.png (keyword + class)
+- melodija_child_007.png (keyword + class)
+- melodija_closeup_008.png (keyword + descriptor)
+- melodija_neutral_009.png (keyword + descriptor)
+- melodija_010.png (keyword only)
+
+Perfect 40-40-20 distribution for optimal LoRA training!
 
 === FEATURES ===
 
-✅ Detects faces anywhere in photo (even background/small faces)
-✅ Crops IN to detected face (zooms to make it large)
-✅ Advanced facial feature detection (eyes, nose, mouth, ears)
-✅ Generous padding around faces (includes hair, head, shoulders)
-✅ Only rejects if NO face/features detected at all
-✅ All photos with faces processed - none skipped
-✅ Sequential numbering (001, 002, 003...)
+✅ Kohya-compatible naming structure
+✅ Automatic descriptor detection (profile, closeup, portrait)
+✅ Class word rotation (girl, child, kid)
+✅ Perfect 40-40-20 distribution
+✅ Sequential 3-digit numbering (001-999)
+✅ Detects faces anywhere in photo
+✅ Crops in to faces (zooms to make large)
+✅ Advanced facial feature detection
+✅ Generous padding (hair, head, shoulders)
+✅ All photos processed - none skipped
 ✅ No duplicates
-✅ Rejections folder for truly no-face photos (pure food, scenery, objects)
 
-**If there's a face ANYWHERE in the photo, this tool will find it and crop to it!**
+**100% compatible with Kohya LoRA trainer - produces stable, realistic results!**
 
 License: MIT
 
