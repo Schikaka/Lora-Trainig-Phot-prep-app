@@ -213,6 +213,65 @@ def check_image_quality(image):
         'contrast': contrast
     }
 
+def generate_lora_filename(keyword, file_counter, face_data, target_width, target_height, total_files):
+    """
+    Generate LoRA-training compatible filename with proper naming structure.
+    
+    Distribution:
+    - 40% keyword only (melodija_001.png)
+    - 40% keyword + class word (melodija_girl_002.png)
+    - 20% keyword + descriptor (melodija_closeup_003.png)
+    """
+    # Class words (safe for LoRA training)
+    class_words = ['girl', 'child', 'kid']
+    
+    # Neutral descriptors based on image analysis
+    descriptors = {
+        'portrait': ['portrait', 'closeup'],  # Close-up face shots
+        'profile': ['profile'],  # Side view
+        'neutral': ['neutral', 'halfbody'],  # Default options
+        'smiling': ['smiling'],  # Only if detectable (we'll use neutral instead for safety)
+    }
+    
+    # Determine naming pattern based on distribution (40/40/20)
+    # Use file_counter to ensure consistent distribution
+    pattern_choice = file_counter % 10  # 0-9
+    
+    if pattern_choice < 4:  # 0-3 = 40%
+        # Pattern A: keyword only
+        filename = f"{keyword}_{file_counter:03d}.png"
+    
+    elif pattern_choice < 8:  # 4-7 = 40%
+        # Pattern B: keyword + class word
+        class_word = class_words[file_counter % len(class_words)]
+        filename = f"{keyword}_{class_word}_{file_counter:03d}.png"
+    
+    else:  # 8-9 = 20%
+        # Pattern C: keyword + descriptor (based on actual image)
+        descriptor = determine_descriptor(face_data, target_width, target_height)
+        filename = f"{keyword}_{descriptor}_{file_counter:03d}.png"
+    
+    return filename
+
+def determine_descriptor(face_data, target_width, target_height):
+    """Determine appropriate descriptor based on image/face analysis"""
+    if not face_data:
+        return 'neutral'
+    
+    # Check face angle
+    angle = face_data.get('angle', 'frontal')
+    if angle == 'profile':
+        return 'profile'
+    
+    # Check if it's a portrait or closeup based on aspect ratio
+    if target_height > target_width:
+        return 'portrait'  # 512x768 is portrait
+    else:
+        return 'closeup'  # 512x512 is closeup
+    
+    # Default fallback
+    return 'neutral'
+
 def smart_crop_face(image, target_width, target_height, verbose=True):
     """Crop image focusing on detected face with generous padding to avoid cutting faces"""
     img_array = np.array(image)
