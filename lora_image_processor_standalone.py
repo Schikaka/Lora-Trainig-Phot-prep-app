@@ -452,21 +452,29 @@ def process_zip_file(zip_path, output_dir=None, create_zip=True, verbose=True, s
             print(f"✅ Processing Complete!")
             print(f"=" * 60)
             print(f"Input images: {len(image_files)}")
-            print(f"Processed: {len(image_files) - skipped_count}")
-            print(f"Skipped: {skipped_count}")
+            print(f"Good quality: {len(image_files) - rejected_count - skipped_count}")
+            print(f"Low quality (in rejections/): {rejected_count}")
+            print(f"Skipped (errors): {skipped_count}")
             print(f"Output files: {processed_count}")
             print(f"Output location: {output_dir.absolute()}")
             
+            if rejected_count > 0:
+                print(f"\n⚠️  LOW QUALITY FILES (saved to rejections/):")
+                print(f"=" * 60)
+                print(f"  {rejected_count} images had quality issues but were still processed")
+                print(f"  Check: {rejections_dir.absolute()}")
+                print(f"\n  Common issues: blur, low contrast, poor lighting")
+                print(f"  Tip: Review rejections folder and decide which to keep")
+            
             # Quality report
             if skipped_count > 0:
-                print(f"\n⚠️  QUALITY REPORT:")
+                print(f"\n❌ SKIPPED FILES (processing errors):")
                 print(f"=" * 60)
                 reason_counts = {}
                 for reason in skipped_reasons:
                     reason_counts[reason] = reason_counts.get(reason, 0) + 1
                 for reason, count in sorted(reason_counts.items(), key=lambda x: x[1], reverse=True):
                     print(f"  • {count}x {reason}")
-                print(f"\nTip: Use better lighting and sharper images for best LoRA results")
             
             # Face detection report
             if no_face_detected:
