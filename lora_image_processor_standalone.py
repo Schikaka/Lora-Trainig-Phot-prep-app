@@ -356,6 +356,10 @@ def process_zip_file(zip_path, output_dir=None, create_zip=True, verbose=True, s
     
     output_dir.mkdir(exist_ok=True, parents=True)
     
+    # Create rejections subdirectory
+    rejections_dir = output_dir / "rejections"
+    rejections_dir.mkdir(exist_ok=True, parents=True)
+    
     if verbose:
         print(f"\n🎨 LoRA Image Processor v{__version__}")
         print(f"=" * 60)
