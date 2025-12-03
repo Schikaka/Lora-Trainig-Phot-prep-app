@@ -469,15 +469,25 @@ def process_single_image(image_path, output_dir, filename, verbose=True, skip_qu
             if cropped.size != (width, height):
                 cropped = upscale_image(cropped, width, height)
             
-            # Generate filename with keyword if provided
+            # Generate filename with LoRA-training compatible naming
             if keyword and file_counter is not None:
-                # When creating multiple sizes, add size suffix to avoid overwriting
+                # Use LoRA naming system for proper training
+                output_filename = generate_lora_filename(
+                    keyword, 
+                    file_counter, 
+                    face_data, 
+                    width, 
+                    height,
+                    total_files=1  # Will be updated by caller if needed
+                )
+                
+                # If multiple sizes, add size suffix to avoid overwriting
                 if len(sizes_to_create) > 1:
-                    output_filename = f"{keyword}_{file_counter:03d}_{width}x{height}.png"
-                else:
-                    output_filename = f"{keyword}_{file_counter:03d}.png"
+                    # Insert size before extension
+                    name_parts = output_filename.rsplit('.', 1)
+                    output_filename = f"{name_parts[0]}_{width}x{height}.{name_parts[1]}"
             else:
-                # Use original format
+                # Use original format (no keyword provided)
                 output_filename = f"{base_name}_{width}x{height}.png"
             
             output_path = actual_output_dir / output_filename
