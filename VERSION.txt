@@ -1,42 +1,86 @@
 LoRA Image Processor
-Version: 3.1.0 - SIMPLE SEQUENTIAL NUMBERING
+Version: 3.2.0 - CAPTION FILES FOR LORA TRAINING
 Release Date: December 3, 2025
 
-**BEST PRACTICE: Simple sequential numbering for LoRA training**
+**COMPLETE LoRA TRAINING SOLUTION: Images + Caption Files**
 
-=== SIMPLIFIED in v3.1.0 ===
+=== NEW FEATURE in v3.2.0 ===
 
-✅ **Simple Sequential Numbering**: Clean and effective!
-   - Format: melodija_0001.png, melodija_0002.png, melodija_0003.png
-   - 4-digit numbering (supports up to 9,999 images)
-   - No complex descriptors - just clean numbered files
-   - Research shows this works best for LoRA training
-
-**Example Output:**
+✅ **Caption File Generation**: Industry-standard LoRA training format!
+   - For every .png image → Creates matching .txt caption file
+   - Same caption text in all .txt files (as per LoRA best practice)
+   - User provides ONE caption, applied to all images
+   
+**Example:**
 ```
-melodija_0001.png
-melodija_0002.png
-melodija_0003.png
-melodija_0004.png
+Input: "Melodija Girl, girl"
+
+Output:
+melodija_0001.png + melodija_0001.txt
+melodija_0002.png + melodija_0002.txt  
+melodija_0003.png + melodija_0003.txt
+```
+
+**Each .txt file contains:**
+```
+Melodija Girl, girl
+```
+
+**Perfect for Kohya LoRA trainer!** 
+No manual caption creation needed - completely automated!
+
+=== NAMING SYSTEM ===
+
+✅ **Simple Sequential**: melodija_0001.png format
+   - 4-digit numbering (0001-9999)
+   - Clean, effective naming
+   - No complex descriptors (research shows simple is best)
+
+=== HOW TO USE ===
+
+**Interactive Mode:**
+1. Keyword prompt: Enter "melodija"
+2. Caption prompt: Enter "Melodija Girl, girl"  
+3. Size prompt: Choose option
+4. Processing creates .png + .txt for each image
+
+**Command Line:**
+```bash
+python lora_image_processor_standalone.py \
+  --keyword melodija \
+  --caption "Melodija Girl, girl" \
+  --sizes 512x512
+```
+
+=== COMPLETE OUTPUT ===
+
+```
+output/lora_processed_XXX/
+├── melodija_0001.png
+├── melodija_0001.txt  ← "Melodija Girl, girl"
+├── melodija_0002.png
+├── melodija_0002.txt  ← "Melodija Girl, girl"
+├── melodija_0003.png
+├── melodija_0003.txt  ← "Melodija Girl, girl"
 ...
-melodija_0027.png
+└── melodija_0027.png
+└── melodija_0027.txt  ← "Melodija Girl, girl"
 ```
 
-Clean, simple, effective!
+Ready to upload directly to Kohya LoRA trainer!
 
-=== CORE FEATURES ===
+=== ALL FEATURES ===
 
-✅ Advanced face detection (full face + facial features)
-✅ Detects faces anywhere in photo (crops in close)
-✅ Generous padding (hair, head, shoulders)
+✅ Automatic caption file generation (.txt for each .png)
+✅ Simple 4-digit sequential numbering
+✅ Advanced face detection
+✅ Crops in to faces (zooms to make large)
 ✅ Quality filtering with rejections folder
-✅ No duplicates (27 photos = 27 files)
-✅ Sequential 4-digit numbering (0001-9999)
+✅ No duplicates (27 photos = 27 image+caption pairs)
 ✅ All faces processed
-✅ Rejections folder for no-face photos
-✅ Perfect for Kohya LoRA trainer
+✅ Perfect for Kohya LoRA training
 
-**Simple numbering = Best results! All detection power, simple naming.**
+**Complete automated LoRA training dataset preparation!**
 
 License: MIT
 
