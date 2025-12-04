@@ -397,83 +397,11 @@ def analyze_image_characteristics(image, face_data):
 
 def generate_lora_filename(keyword, file_counter, face_data, target_width, target_height, image=None):
     """
-    Generate MAXIMUM descriptive LoRA filenames with combined naming.
-    
-    NEW Distribution (MOST DESCRIPTIVE):
-    - 60% keyword + class + descriptor (melodija_girl_smiling_001.png)
-    - 40% keyword + descriptor only (melodija_laughing_002.png)
-    
-    Every file is richly described for optimal LoRA training!
+    Simple sequential numbering for LoRA training.
+    Format: keyword_0001.png, keyword_0002.png, etc.
     """
-    # EXPANDED class words (safe, neutral terms)
-    class_words = ['girl', 'child', 'kid', 'person', 'young_girl', 'toddler', 'subject']
-    
-    # Get detected characteristics from image analysis
-    if image and face_data:
-        detected_descriptors = analyze_image_characteristics(image, face_data)
-        
-        # Pick best descriptor based on priority
-        if 'laughing' in detected_descriptors:
-            primary_descriptor = 'laughing'
-        elif 'joyful' in detected_descriptors:
-            primary_descriptor = 'joyful'
-        elif 'smiling' in detected_descriptors:
-            primary_descriptor = 'smiling'
-        elif 'cheerful' in detected_descriptors:
-            primary_descriptor = 'cheerful'
-        elif 'subtle_smile' in detected_descriptors:
-            primary_descriptor = 'subtle_smile'
-        elif 'playful' in detected_descriptors:
-            primary_descriptor = 'playful'
-        elif 'surprised' in detected_descriptors:
-            primary_descriptor = 'surprised'
-        elif 'curious' in detected_descriptors:
-            primary_descriptor = 'curious'
-        elif 'serious' in detected_descriptors:
-            primary_descriptor = 'serious'
-        elif 'pensive' in detected_descriptors:
-            primary_descriptor = 'pensive'
-        elif 'thoughtful' in detected_descriptors:
-            primary_descriptor = 'thoughtful'
-        elif 'profile' in detected_descriptors:
-            primary_descriptor = 'profile'
-        elif 'head_tilted' in detected_descriptors:
-            primary_descriptor = 'head_tilted'
-        elif 'looking_away' in detected_descriptors:
-            primary_descriptor = 'looking_away'
-        elif 'eye_contact' in detected_descriptors:
-            primary_descriptor = 'eye_contact'
-        elif 'extreme_closeup' in detected_descriptors:
-            primary_descriptor = 'extreme_closeup'
-        elif 'closeup' in detected_descriptors:
-            primary_descriptor = 'closeup'
-        elif 'portrait' in detected_descriptors:
-            primary_descriptor = 'portrait'
-        else:
-            primary_descriptor = 'neutral'
-        
-        # Add secondary descriptor if available and meaningful
-        secondary_descriptor = None
-        for desc in detected_descriptors:
-            if desc != primary_descriptor and desc in ['eye_contact', 'looking_away', 'well_lit', 'teeth_visible', 'mouth_open']:
-                secondary_descriptor = desc
-                break
-    else:
-        primary_descriptor = 'neutral'
-        secondary_descriptor = None
-    
-    # Determine pattern: 60% combined (class + descriptor), 40% descriptor only
-    # Use modulo 10 for distribution
-    pattern = file_counter % 10
-    
-    if pattern < 6:  # 0-5 = 60%
-        # COMBINED: keyword + class + descriptor (most informative!)
-        class_word = class_words[file_counter % len(class_words)]
-        filename = f"{keyword}_{class_word}_{primary_descriptor}_{file_counter:03d}.png"
-    else:  # 6-9 = 40%
-        # keyword + descriptor only
-        filename = f"{keyword}_{primary_descriptor}_{file_counter:03d}.png"
-    
+    # Simple 4-digit sequential numbering
+    filename = f"{keyword}_{file_counter:04d}.png"
     return filename
 
 def determine_descriptor(face_data, target_width, target_height):
