@@ -1,109 +1,42 @@
-LoRA Image Processor  
-Version: 3.0.0 - MAXIMUM DESCRIPTIVE POWER
+LoRA Image Processor
+Version: 3.1.0 - SIMPLE SEQUENTIAL NUMBERING
 Release Date: December 3, 2025
 
-**🚀 MAJOR UPGRADE - Professional-Grade Expression Detection**
+**BEST PRACTICE: Simple sequential numbering for LoRA training**
 
-=== MASSIVE IMPROVEMENTS in v3.0.0 ===
+=== SIMPLIFIED in v3.1.0 ===
 
-✅ **COMBINED NAMING**: Class + Descriptor together!
-   - 60% keyword + class + expression: melodija_girl_smiling_001.png
-   - 40% keyword + expression: melodija_laughing_002.png
-   - MAXIMUM information for LoRA training!
+✅ **Simple Sequential Numbering**: Clean and effective!
+   - Format: melodija_0001.png, melodija_0002.png, melodija_0003.png
+   - 4-digit numbering (supports up to 9,999 images)
+   - No complex descriptors - just clean numbered files
+   - Research shows this works best for LoRA training
 
-✅ **EXPANDED Class Words** (7 options, was 3):
-   - girl, child, kid, person, young_girl, toddler, subject
-   - More variety = better generalization
-
-✅ **ADVANCED Expression Detection** (15+ expressions!):
-   
-   **Smiles (4 levels):**
-   - 😆 laughing (big smile + open mouth)
-   - 😄 joyful (strong smile + high variance)
-   - 😊 smiling (clear smile)
-   - 🙂 cheerful (moderate smile)
-   - 😏 subtle_smile (slight smile)
-   - 😸 playful (subtle smile + expressive)
-   
-   **Other Emotions:**
-   - 😮 surprised (wide eyes + high variance)
-   - 🤔 curious (wide eyes, moderate variance)
-   - 😐 serious (low variance, calm)
-   - 💭 pensive (serious + thoughtful signals)
-   - 🧠 thoughtful (low variance, concentrated)
-   - 😶 neutral (default)
-   
-   **Gaze & Eyes:**
-   - 👁️ eye_contact (eyes centered, looking at camera)
-   - 👀 looking_away (eyes to side)
-   - 😳 eyes_wide (surprised look)
-   - 😑 squinting (narrowed eyes)
-   
-   **Mouth States:**
-   - 😁 teeth_visible (big smile with teeth)
-   - 😮 mouth_open (open mouth detected)
-   
-   **Head Position:**
-   - 👤 profile (side view - 90°)
-   - 🔄 head_tilted (angled view)
-   
-   **Framing:**
-   - 🔍 extreme_closeup (face >35%)
-   - 🔍 closeup (face 25-35%)
-   - 📸 portrait (face 15-25%)
-   
-   **Lighting:**
-   - 💡 well_lit (high contrast, clear features)
-
-=== DETECTION TECHNOLOGY ===
-
-**Multi-Signal Analysis:**
-1. Smile cascade (3 sensitivity levels: subtle, clear, big)
-2. Eye cascade + aspect ratio analysis
-3. Mouth variance analysis (open vs closed)
-4. Overall face variance (expressive vs calm)
-5. Contrast analysis (lighting quality)
-6. Gaze direction (eye position relative to face center)
-
-**Scoring System:**
-- Each signal contributes to expression score
-- Highest scoring expression wins
-- Additional descriptors added for extra detail
-
-=== NAMING EXAMPLES ===
-
+**Example Output:**
 ```
-melodija_girl_laughing_001.png      ← Class + Expression (60%)
-melodija_smiling_002.png            ← Expression only (40%)
-melodija_child_playful_003.png      ← Class + Expression (60%)
-melodija_profile_004.png            ← Expression only (40%)
-melodija_toddler_joyful_005.png     ← Class + Expression (60%)
-melodija_eye_contact_006.png        ← Expression only (40%)
-melodija_person_curious_007.png     ← Class + Expression (60%)
-melodija_thoughtful_008.png         ← Expression only (40%)
-melodija_young_girl_cheerful_009.png ← Class + Expression (60%)
-melodija_subtle_smile_010.png       ← Expression only (40%)
+melodija_0001.png
+melodija_0002.png
+melodija_0003.png
+melodija_0004.png
+...
+melodija_0027.png
 ```
 
-Perfect 60-40 split with RICH descriptive information!
+Clean, simple, effective!
 
-=== ALL FEATURES ===
+=== CORE FEATURES ===
 
-✅ 15+ detectable facial expressions
-✅ 7 class word variations
-✅ Combined naming (class + descriptor)
-✅ Multi-signal expression analysis
-✅ Gaze direction detection
-✅ Head position analysis
-✅ Lighting quality detection
-✅ Smile intensity levels (subtle → big)
-✅ Eye state analysis (wide, squinting, contact)
-✅ Mouth state detection (open, teeth visible)
-✅ 100% face-focused (no irrelevant descriptors)
-✅ No duplicates, sequential numbering
-✅ All faces processed, rejections for no-face
+✅ Advanced face detection (full face + facial features)
+✅ Detects faces anywhere in photo (crops in close)
+✅ Generous padding (hair, head, shoulders)
+✅ Quality filtering with rejections folder
+✅ No duplicates (27 photos = 27 files)
+✅ Sequential 4-digit numbering (0001-9999)
+✅ All faces processed
+✅ Rejections folder for no-face photos
+✅ Perfect for Kohya LoRA trainer
 
-**MAXIMUM descriptive power for professional LoRA training results!**
+**Simple numbering = Best results! All detection power, simple naming.**
 
 License: MIT
 
