@@ -644,8 +644,17 @@ def process_single_image(image_path, output_dir, filename, verbose=True, skip_qu
             cropped.save(output_path, 'PNG', quality=95)
             results.append(output_filename)
             
+            # Create caption file for LoRA training (same name, .txt extension)
+            if caption:
+                caption_filename = output_filename.replace('.png', '.txt')
+                caption_path = actual_output_dir / caption_filename
+                with open(caption_path, 'w', encoding='utf-8') as f:
+                    f.write(caption)
+            
             if verbose:
                 print(f"  ✓ Saved: {output_filename}")
+                if caption:
+                    print(f"  ✓ Caption: {caption_filename}")
         
         return {
             'skipped': False,
