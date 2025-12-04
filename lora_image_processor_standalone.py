@@ -749,7 +749,7 @@ def process_zip_file(zip_path, output_dir=None, create_zip=True, verbose=True, s
             
             # Pass counter and rejections_dir
             counter = file_counter if keyword else None
-            result = process_single_image(img_path, output_dir, img_path.name, verbose, skip_quality_check, output_sizes, counter, keyword, rejections_dir)
+            result = process_single_image(img_path, output_dir, img_path.name, verbose, skip_quality_check, output_sizes, counter, keyword, rejections_dir, caption)
             
             if isinstance(result, dict):
                 if result.get('skipped'):
