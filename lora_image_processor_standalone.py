@@ -904,7 +904,8 @@ For more info: https://github.com/yourusername/lora-image-processor
     
     parser.add_argument('input_zip', nargs='?', default='input/input.zip', help='Path to input ZIP file (default: input/input.zip)')
     parser.add_argument('-o', '--output', help='Output directory (default: auto-generated)', default=None)
-    parser.add_argument('--keyword', help='Keyword for renaming files (e.g., "MyDaughter"). If not provided, will prompt.', default=None)
+    parser.add_argument('--keyword', help='Keyword for renaming files (e.g., "Melodija"). If not provided, will prompt.', default=None)
+    parser.add_argument('--caption', help='Caption text for .txt files (e.g., "Melodija Girl, girl"). If not provided, will prompt.', default=None)
     parser.add_argument('--sizes', help='Output sizes: "512x512" (default), "512x768", "1024x1024", or "both"', 
                         default='512x512', choices=['both', '512x512', '512x768', '1024x1024'])
     parser.add_argument('--no-zip', action='store_true', help='Do not create output ZIP file')
