@@ -983,7 +983,8 @@ For more info: https://github.com/yourusername/lora-image-processor
         verbose=not args.quiet,
         skip_quality_check=args.skip_quality_check,
         output_sizes=output_sizes,
-        keyword=keyword
+        keyword=keyword,
+        caption=caption
     )
     
     sys.exit(0 if success else 1)
