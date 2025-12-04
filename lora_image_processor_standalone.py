@@ -922,8 +922,8 @@ For more info: https://github.com/yourusername/lora-image-processor
         print("  KEYWORD FOR FILE NAMING")
         print("=" * 60)
         print("\nFor LoRA training, all images should have consistent names")
-        print("with your concept keyword (e.g., 'MyDaughter', 'AlexSmith').")
-        print("\nFiles will be renamed to: [keyword]_001.png, [keyword]_002.png, etc.")
+        print("with your concept keyword (e.g., 'Melodija').")
+        print("\nFiles will be renamed to: [keyword]_0001.png, [keyword]_0002.png, etc.")
         print("\nPress Enter to skip and use original filenames.")
         keyword = input("\nEnter keyword: ").strip()
         if keyword:
@@ -931,6 +931,25 @@ For more info: https://github.com/yourusername/lora-image-processor
             keyword = "".join(c for c in keyword if c.isalnum() or c in ('_', '-'))
             if not keyword:
                 keyword = None
+    
+    # Get caption for .txt files (LoRA training requirement)
+    caption = args.caption
+    if not args.quiet and keyword and not caption:
+        print("\n" + "=" * 60)
+        print("  CAPTION FOR LORA TRAINING")
+        print("=" * 60)
+        print("\nFor each image, a matching .txt file will be created.")
+        print("Example: melodija_0001.png → melodija_0001.txt")
+        print("\nThe caption helps LoRA learn your subject.")
+        print("Example captions:")
+        print("  'Melodija Girl, girl'")
+        print("  'Alex Smith, person'")
+        print("  'My Daughter, child'")
+        print("\nThis same caption will be used for ALL images.")
+        print("\nPress Enter to skip caption files.")
+        caption = input("\nEnter caption text: ").strip()
+        if not caption:
+            caption = None
     
     # Get output size selection - ALWAYS ASK if not in quiet mode
     output_sizes = args.sizes
